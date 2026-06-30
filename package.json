@@ -1,0 +1,75 @@
+{
+  "name": "filter-orbit",
+  "version": "1.0.0",
+  "description": "FilterOrbit: Advanced WooCommerce Product Filters — zero-request filtering with React admin",
+  "type": "module",
+  "main": "./dist/ppros-ecom-filter.umd.cjs",
+  "module": "./dist/ppros-ecom-filter.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/ppros-ecom-filter.js",
+      "require": "./dist/ppros-ecom-filter.umd.cjs"
+    },
+    "./styles.css": "./dist/style.css"
+  },
+  "files": [
+    "dist",
+    "assets",
+    "includes",
+    "filter-orbit.php"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run build:lib && npm run build:assets",
+    "build:lib": "tsc -p tsconfig.lib.json && vite build --mode library",
+    "build:admin": "webpack --config webpack.config.cjs --config-name admin",
+    "build:frontend": "webpack --config webpack.config.cjs --config-name frontend",
+    "build:assets": "webpack --config webpack.config.cjs",
+    "watch:admin": "webpack --config webpack.config.cjs --config-name admin --watch",
+    "watch:frontend": "webpack --config webpack.config.cjs --config-name frontend --watch",
+    "preview": "vite preview",
+    "lint": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.26.0",
+    "@babel/preset-typescript": "^7.26.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "babel-loader": "^9.2.1",
+    "css-loader": "^7.1.2",
+    "mini-css-extract-plugin": "^2.9.2",
+    "postcss": "^8.4.49",
+    "postcss-import": "^16.1.0",
+    "postcss-loader": "^8.1.1",
+    "postcss-prefix-selector": "^2.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.16",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vite-plugin-dts": "^4.3.0",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^5.1.4"
+  },
+  "keywords": [
+    "ecommerce",
+    "filter",
+    "react",
+    "zero-request",
+    "semantic-search"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.17.0"
+  }
+}

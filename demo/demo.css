@@ -1,0 +1,15 @@
+@config "../tailwind.demo.config.js";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Demo layout helpers ─────────────────────────────────────────────────── */
+.demo-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #f5f3ff;
+  font-family: "Inter", system-ui, sans-serif;
+  color: #0f172a;
+}

@@ -1,0 +1,20 @@
+# Files excluded from the WordPress.org distribution zip
+.git
+.gitignore
+.distignore
+.github
+node_modules
+src
+admin/src
+frontend/src
+*.config.cjs
+*.config.js
+*.config.ts
+package.json
+package-lock.json
+tsconfig*.json
+tailwind.config.js
+postcss.config.js
+vite.config.ts
+README.md
+demo

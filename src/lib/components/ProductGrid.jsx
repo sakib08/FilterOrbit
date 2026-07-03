@@ -30,20 +30,17 @@ export function ProductGrid({ products, columns = 3, accentColor = "#8b5cf6" }) 
       {products.map((p) => (
         <article
           key={p.id}
-          className="ppros_ecom_filter-rounded-xl ppros_ecom_filter-border ppros_ecom_filter-border-gray-100 ppros_ecom_filter-bg-white ppros_ecom_filter-overflow-hidden ppros_ecom_filter-shadow-sm"
+          className="ppros_ecom_filter-product-card ppros_ecom_filter-rounded-xl ppros_ecom_filter-border ppros_ecom_filter-border-gray-100 ppros_ecom_filter-bg-white ppros_ecom_filter-overflow-hidden ppros_ecom_filter-shadow-sm"
         >
-          <div className="ppros_ecom_filter-h-40 ppros_ecom_filter-bg-slate-100 ppros_ecom_filter-overflow-hidden">
+          <div className="ppros_ecom_filter-product-card-media">
             {p.imageUrl ? (
               <img
                 src={p.imageUrl}
                 alt={p.title}
-                className="ppros_ecom_filter-h-full ppros_ecom_filter-w-full ppros_ecom_filter-object-cover"
                 loading="lazy"
               />
             ) : (
-              <div className="ppros_ecom_filter-flex ppros_ecom_filter-h-full ppros_ecom_filter-items-center ppros_ecom_filter-justify-center ppros_ecom_filter-text-3xl">
-                📦
-              </div>
+              <div className="ppros_ecom_filter-product-card-placeholder">📦</div>
             )}
           </div>
           <div className="ppros_ecom_filter-p-3">

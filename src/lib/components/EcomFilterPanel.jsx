@@ -132,6 +132,7 @@ export function EcomFilterPanel({
           selected={filterState[def.id] ?? []}
           onToggle={(v) => toggleFilter(def.id, v)}
           buttonColor={ui.buttonColor}
+          accentColor={ui.accentColor}
         />
       );
     }

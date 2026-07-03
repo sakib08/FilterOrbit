@@ -9,53 +9,82 @@ export function PillFilterGroup({
   selected,
   onToggle,
   buttonColor,
+  accentColor,
 }) {
   const lang = useLanguage();
   const count = selected.length;
   const buttonTheme = getButtonColorTheme(buttonColor);
+  // accentColor overrides the header label / badge text; falls back to buttonColor
+  const labelColor = accentColor || buttonTheme.text;
 
   return (
-    <div className="ppros_ecom_filter-panel">
-      <div className="ppros_ecom_filter-flex ppros_ecom_filter-justify-between ppros_ecom_filter-items-center ppros_ecom_filter-mb-3">
-        <h3 className="ppros_ecom_filter-text-sm ppros_ecom_filter-font-semibold ppros_ecom_filter-text-slate-800">
+    <div className="ppros_ecom_filter-pill-group">
+      {/* Coloured header strip */}
+      <div
+        className="ppros_ecom_filter-pill-group-header"
+        style={{ backgroundColor: buttonTheme.background, borderBottomColor: buttonTheme.border }}
+      >
+        <h3
+          className="ppros_ecom_filter-pill-group-label"
+          style={{ color: labelColor }}
+        >
           {label}
         </h3>
         {count > 0 && (
-          <span className="ppros_ecom_filter-text-[10px] ppros_ecom_filter-font-bold ppros_ecom_filter-tracking-widest ppros_ecom_filter-text-slate-500">
+          <span
+            className="ppros_ecom_filter-pill-group-badge"
+            style={{ backgroundColor: labelColor, color: "#ffffff" }}
+          >
             {count} {lang.selected_label}
           </span>
         )}
       </div>
-      <div className="ppros_ecom_filter-flex ppros_ecom_filter-flex-wrap ppros_ecom_filter-gap-2" role="group" aria-label={label}>
-        {options.map((opt) => {
-          const active = selected.includes(opt.value);
-          return (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => {
-                onToggle(opt.value);
-                recordBrowseEvent(filterId, opt.value);
-              }}
-              className={[
-                "ppros_ecom_filter-pill",
-                active ? "ppros_ecom_filter-pill-active" : "ppros_ecom_filter-pill-inactive",
-              ].join(" ")}
-              style={
-                active
-                  ? {
-                      borderColor: buttonTheme.border,
-                      color: buttonTheme.text,
-                      backgroundColor: buttonTheme.background,
-                    }
-                  : undefined
-              }
-              aria-pressed={active}
-            >
-              {opt.label}
-            </button>
-          );
-        })}
+
+      {/* Pills area */}
+      <div
+        className="ppros_ecom_filter-pill-group-body"
+        role="group"
+        aria-label={label}
+      >
+        {options.length === 0 ? (
+          <p className="ppros_ecom_filter-pill-group-empty">No options available</p>
+        ) : (
+          options.map((opt) => {
+            const active = selected.some(
+              (v) => String(v).toLowerCase() === String(opt.value).toLowerCase()
+            );
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => {
+                  onToggle(opt.value);
+                  recordBrowseEvent(filterId, opt.value);
+                }}
+                className={[
+                  "ppros_ecom_filter-pill",
+                  active ? "ppros_ecom_filter-pill-active" : "ppros_ecom_filter-pill-inactive",
+                ].join(" ")}
+                style={
+                  active
+                    ? {
+                        borderColor: buttonTheme.border,
+                        color: buttonTheme.text,
+                        backgroundColor: buttonTheme.background,
+                        boxShadow: `0 0 0 3px ${buttonTheme.background}`,
+                      }
+                    : undefined
+                }
+                aria-pressed={active}
+              >
+                {opt.label}
+                {opt.count != null && opt.count > 0 && (
+                  <span className="ppros_ecom_filter-pill-count">{opt.count}</span>
+                )}
+              </button>
+            );
+          })
+        )}
       </div>
     </div>
   );

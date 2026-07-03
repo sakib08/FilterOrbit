@@ -1,4 +1,4 @@
-# ppros_ecom_filter
+# FilterOrbit: Advanced Product Filters for WooCommerce
 
 Modern React e-commerce filter library with **zero-request** client-side filtering. All Tailwind classes use the `ppros_ecom_filter-` prefix to avoid style collisions.
 
@@ -98,4 +98,4 @@ All library UI uses Tailwind with `prefix: 'ppros_ecom_filter-'` in `tailwind.co
 
 ## License
 
-MIT
+GPL-2.0-or-later — see [GNU GPL v2](https://www.gnu.org/licenses/gpl-2.0.html).

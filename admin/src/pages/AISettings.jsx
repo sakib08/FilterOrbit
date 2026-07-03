@@ -144,6 +144,37 @@ export default function AISettings() {
 
   return (
     <>
+      {/* ── Pro Coming Soon banner ── */}
+      <div className="fo-mb-6 fo-rounded-2xl fo-border fo-border-violet-200 fo-bg-gradient-to-r fo-from-violet-50 fo-via-purple-50 fo-to-fuchsia-50 fo-p-5 fo-shadow-sm">
+        <div className="fo-flex fo-items-start fo-gap-4">
+          <div className="fo-flex fo-h-12 fo-w-12 fo-shrink-0 fo-items-center fo-justify-center fo-rounded-2xl fo-bg-gradient-to-br fo-from-violet-600 fo-to-purple-500 fo-text-2xl fo-shadow-md">
+            🔒
+          </div>
+          <div className="fo-flex-1 fo-min-w-0">
+            <div className="fo-flex fo-items-center fo-gap-3 fo-flex-wrap">
+              <h3 className="fo-text-base fo-font-bold fo-text-violet-900">AI Settings — Pro Feature</h3>
+              <span className="fo-rounded-full fo-bg-gradient-to-r fo-from-violet-600 fo-to-purple-500 fo-px-3 fo-py-1 fo-text-[10px] fo-font-bold fo-uppercase fo-tracking-widest fo-text-white">
+                Coming Soon
+              </span>
+            </div>
+            <p className="fo-mt-1 fo-text-sm fo-text-violet-700 fo-leading-relaxed">
+              Connecting OpenAI, Gemini, and RAG-based vector search to your WooCommerce store is a <strong>Pro</strong> feature. You can preview and configure settings below, but AI functionality is not active on the free plan.
+            </p>
+            <div className="fo-mt-3 fo-flex fo-flex-wrap fo-gap-2 fo-text-[11px]">
+              <span className="fo-rounded-lg fo-border fo-border-violet-200 fo-bg-white fo-px-3 fo-py-1.5 fo-text-violet-800 fo-font-medium">
+                ✅ Currently active: Basic keyword search
+              </span>
+              <span className="fo-rounded-lg fo-border fo-border-violet-200 fo-bg-white fo-px-3 fo-py-1.5 fo-text-slate-400 fo-font-medium">
+                🔒 AI Natural Language Search — Pro
+              </span>
+              <span className="fo-rounded-lg fo-border fo-border-violet-200 fo-bg-white fo-px-3 fo-py-1.5 fo-text-slate-400 fo-font-medium">
+                🔒 RAG / Vector Search — Pro
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="fo-mb-4 fo-flex fo-items-center fo-justify-between">
         <div>
           <h2 className="fo-text-xl fo-font-bold fo-text-slate-900">AI Settings</h2>

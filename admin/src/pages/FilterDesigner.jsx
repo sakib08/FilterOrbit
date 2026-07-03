@@ -277,10 +277,31 @@ export default function FilterDesigner() {
                   </p>
                 )}
 
+                {selectedBlock.type === "nlp_search" && (
+                  <div className="fo-rounded-xl fo-border fo-border-violet-200 fo-bg-gradient-to-br fo-from-violet-50 fo-to-purple-50 fo-p-4">
+                    <div className="fo-flex fo-items-center fo-gap-2 fo-mb-2">
+                      <span className="fo-text-lg">🔒</span>
+                      <span className="fo-text-sm fo-font-bold fo-text-violet-800">
+                        AI Natural Language Search
+                      </span>
+                      <span className="fo-ml-auto fo-rounded-full fo-bg-gradient-to-r fo-from-violet-600 fo-to-purple-500 fo-px-2.5 fo-py-0.5 fo-text-[10px] fo-font-bold fo-uppercase fo-tracking-wide fo-text-white">
+                        PRO
+                      </span>
+                    </div>
+                    <p className="fo-text-xs fo-text-violet-700 fo-leading-relaxed">
+                      Real AI-powered search (OpenAI / Gemini) is a Pro feature. On the free plan, the block shows a basic keyword search instead.
+                    </p>
+                    <div className="fo-mt-3 fo-rounded-lg fo-bg-white fo-border fo-border-violet-100 fo-px-3 fo-py-2 fo-text-[11px] fo-text-slate-500">
+                      ✅ <strong>Currently active:</strong> Basic keyword search (title + description)
+                    </div>
+                  </div>
+                )}
+
                 <UiColorSettings
                   item={selectedBlock}
                   defaults={getDefaultUiColorsForBlock(selectedBlock.type)}
                   onChange={(patch) => updateBlock(selectedBlock.id, patch)}
+                  isBlock
                 />
 
                 {selectedBlock.type === "products" && (
@@ -361,6 +382,7 @@ export default function FilterDesigner() {
                   item={selectedFilter}
                   defaults={getDefaultUiColorsForFilter(selectedFilter.type)}
                   onChange={(patch) => updateFilter(selectedFilter.id, patch)}
+                  filterType={selectedFilter.type}
                 />
 
                 <div className="fo-flex fo-items-center fo-justify-between fo-gap-3">

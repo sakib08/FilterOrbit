@@ -218,7 +218,8 @@ export function countByOption(
 
     const values = Array.isArray(raw) ? raw : [raw];
     for (const value of values) {
-      const key = String(value);
+      const key = String(value).trim();
+      if (key === "") continue;        // skip blank/empty entries
       map.set(key, (map.get(key) ?? 0) + 1);
     }
   }

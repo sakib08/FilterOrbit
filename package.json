@@ -30,7 +30,8 @@
     "watch:admin": "webpack --config webpack.config.cjs --config-name admin --watch",
     "watch:frontend": "webpack --config webpack.config.cjs --config-name frontend --watch",
     "preview": "vite preview",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "build:plugin": "node scripts/build-plugin.mjs"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

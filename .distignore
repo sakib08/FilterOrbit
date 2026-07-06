@@ -18,3 +18,6 @@ postcss.config.js
 vite.config.ts
 README.md
 demo
+build
+dist
+scripts

@@ -140,7 +140,7 @@ class Filter_Orbit_Frontend {
 	 */
 	public function render_shortcode( $atts = array() ) {
 		if ( ! class_exists( 'WooCommerce' ) ) {
-			return '<p class="filter-orbit-notice">' . esc_html__( 'FilterOrbit requires WooCommerce to be active.', 'filter-orbit' ) . '</p>';
+			return '<p class="filter-orbit-notice">' . esc_html__( 'FilterOrbit requires WooCommerce to be active.', 'filterorbit-advanced-product-filters-for-woocommerce' ) . '</p>';
 		}
 
 		$this->should_enqueue = true;

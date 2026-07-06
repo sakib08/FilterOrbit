@@ -1,16 +1,17 @@
 <?php
 /**
  * Plugin Name:       FilterOrbit: Advanced Product Filters for WooCommerce
- * Plugin URI:        https://github.com/filterorbit/filter-orbit
+ * Plugin URI:        https://filterorbit.com
  * Description:       Advanced zero-request product filters for WooCommerce with AI, visual discovery, and a React-powered filter designer.
  * Version:           1.0.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
+ * Requires Plugins:  woocommerce
  * Author:            FilterOrbit
  * Author URI:        https://filterorbit.com
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       filter-orbit
+ * Text Domain:       filterorbit-advanced-product-filters-for-woocommerce
  * Domain Path:       /languages
  *
  * @package FilterOrbit

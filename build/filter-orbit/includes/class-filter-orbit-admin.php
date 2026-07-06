@@ -25,7 +25,6 @@ class Filter_Orbit_Admin {
 		add_action( 'current_screen', array( $this, 'setup_admin_screen' ) );
 		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
-		add_action( 'admin_head', array( $this, 'admin_page_styles' ) );
 	}
 
 	/**
@@ -35,13 +34,13 @@ class Filter_Orbit_Admin {
 	 */
 	public function register_menus() {
 		add_menu_page(
-			__( 'filter-orbit', 'filter-orbit' ),
-			__( 'filter-orbit', 'filter-orbit' ),
+			__( 'FilterOrbit', 'filter-orbit' ),
+			__( 'FilterOrbit', 'filter-orbit' ),
 			'manage_woocommerce',
 			self::MENU_SLUG,
 			array( $this, 'render_admin_page' ),
 			'dashicons-filter',
-			56
+			58
 		);
 
 		add_submenu_page(
@@ -156,44 +155,6 @@ class Filter_Orbit_Admin {
 	}
 
 	/**
-	 * Inline CSS to keep WP chrome from overlapping our app header.
-	 *
-	 * @return void
-	 */
-	public function admin_page_styles() {
-		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-
-		if ( ! $screen || ! $this->is_filter_orbit_screen( $screen ) ) {
-			return;
-		}
-		?>
-		<style id="filter-orbit-admin-layout-css">
-			body.filter-orbit-admin-page #wpbody-content {
-				padding-bottom: 0;
-			}
-
-			/* Hide any WP/WC notices or stray nodes outside our shell */
-			body.filter-orbit-admin-page #wpbody-content > :not(.filter-orbit-admin-shell) {
-				display: none !important;
-			}
-
-			body.filter-orbit-admin-page .filter-orbit-admin-shell {
-				margin: 0;
-				padding: 0;
-				max-width: none;
-			}
-
-			body.filter-orbit-admin-page .woocommerce-layout__header,
-			body.filter-orbit-admin-page .woo-nav-tab-wrapper,
-			body.filter-orbit-admin-page #screen-meta,
-			body.filter-orbit-admin-page #screen-meta-links {
-				display: none !important;
-			}
-		</style>
-		<?php
-	}
-
-	/**
 	 * Whether the screen is a FilterOrbit admin page.
 	 *
 	 * @param WP_Screen $screen Screen object.
@@ -242,6 +203,17 @@ class Filter_Orbit_Admin {
 				array(),
 				$css_version
 			);
+
+			wp_add_inline_style(
+				'filter-orbit-admin',
+				'body.filter-orbit-admin-page #wpbody-content { padding-bottom: 0; }
+body.filter-orbit-admin-page #wpbody-content > :not(.filter-orbit-admin-shell) { display: none !important; }
+body.filter-orbit-admin-page .filter-orbit-admin-shell { margin: 0; padding: 0; max-width: none; }
+body.filter-orbit-admin-page .woocommerce-layout__header,
+body.filter-orbit-admin-page .woo-nav-tab-wrapper,
+body.filter-orbit-admin-page #screen-meta,
+body.filter-orbit-admin-page #screen-meta-links { display: none !important; }'
+			);
 		}
 
 		wp_enqueue_script(
@@ -267,7 +239,7 @@ class Filter_Orbit_Admin {
 				'languageSettingsUrl' => admin_url( 'admin.php?page=' . self::MENU_SLUG . '-language' ),
 				'designerUrl'        => admin_url( 'admin.php?page=' . self::MENU_SLUG ),
 				'i18n'               => array(
-					'pluginName'       => __( 'filter-orbit', 'filter-orbit' ),
+					'pluginName'       => __( 'FilterOrbit', 'filter-orbit' ),
 					'filterDesigner'   => __( 'Filter Designer', 'filter-orbit' ),
 					'settings'         => __( 'Settings', 'filter-orbit' ),
 					'aiSettings'       => __( 'AI Settings', 'filter-orbit' ),

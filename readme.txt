@@ -29,7 +29,7 @@ FilterOrbit adds a powerful, instant-filtering sidebar to your WooCommerce store
 
 == Installation ==
 
-1. Upload the `filterorbit-advanced-product-filters-for-woocommerce` folder to the `/wp-content/plugins/` directory.
+1. Upload the `filterorbit-product-filters` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the **Plugins** screen in WordPress.
 3. Go to **FilterOrbit** in the admin menu and design your filter layout.
 4. Add the shortcode `[filter_orbit]` to any page, or enable the automatic shop sidebar in settings.
@@ -76,7 +76,7 @@ If you do not enter any API keys in the AI Settings screen, no data is ever tran
 
 The compiled JavaScript assets (`assets/admin/filter-orbit-admin.js` and `assets/frontend/filter-orbit.js`) are built from human-readable React/TypeScript source files. The full source code is publicly available at:
 
-https://filterorbit.com
+https://github.com/sakib08/FilterOrbit
 
 Build instructions (requires Node.js 18+):
 

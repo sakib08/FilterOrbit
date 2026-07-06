@@ -15,7 +15,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
-const PLUGIN_SLUG = "filter-orbit";
+const PLUGIN_SLUG = "filterorbit-product-filters";
 const { version } = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
 const OUT_DIR = path.join(ROOT, "build");
 const PLUGIN_DIR = path.join(OUT_DIR, PLUGIN_SLUG);
@@ -34,6 +34,8 @@ const EXCLUDE = new Set([
   "build",
   "scripts",
   "demo",
+  "dist",
+  "REVIEW-REPLY.txt",
   "README.md",
   "package.json",
   "package-lock.json",
@@ -75,6 +77,9 @@ function copyDir(src, dest, baseRel = "") {
     const relPath = baseRel ? path.join(baseRel, entry.name) : entry.name;
 
     if (isExcluded(relPath)) continue;
+
+    // Skip legacy bootstrap file if present in the dev tree.
+    if (entry.name === "filter-orbit.php") continue;
 
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);

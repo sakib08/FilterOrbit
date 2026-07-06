@@ -154,7 +154,7 @@ class Filter_Orbit_REST_API {
 		$filters = $request->get_json_params();
 
 		if ( ! is_array( $filters ) ) {
-			return new WP_Error( 'invalid_filters', __( 'Filters must be an array.', 'filterorbit-advanced-product-filters-for-woocommerce' ), array( 'status' => 400 ) );
+			return new WP_Error( 'invalid_filters', __( 'Filters must be an array.', 'filterorbit-product-filters' ), array( 'status' => 400 ) );
 		}
 
 		$sanitized = array_map( array( $this, 'sanitize_filter' ), $filters );
@@ -188,7 +188,7 @@ class Filter_Orbit_REST_API {
 		$settings = $request->get_json_params();
 
 		if ( ! is_array( $settings ) ) {
-			return new WP_Error( 'invalid_settings', __( 'Settings must be an object.', 'filterorbit-advanced-product-filters-for-woocommerce' ), array( 'status' => 400 ) );
+			return new WP_Error( 'invalid_settings', __( 'Settings must be an object.', 'filterorbit-product-filters' ), array( 'status' => 400 ) );
 		}
 
 		$defaults  = Filter_Orbit_Activator::default_settings();
@@ -243,7 +243,7 @@ class Filter_Orbit_REST_API {
 		$incoming = $request->get_json_params();
 
 		if ( ! is_array( $incoming ) ) {
-			return new WP_Error( 'invalid_ai_settings', __( 'AI settings must be an object.', 'filterorbit-advanced-product-filters-for-woocommerce' ), array( 'status' => 400 ) );
+			return new WP_Error( 'invalid_ai_settings', __( 'AI settings must be an object.', 'filterorbit-product-filters' ), array( 'status' => 400 ) );
 		}
 
 		$current  = get_option( 'filter_orbit_ai_settings', Filter_Orbit_Activator::default_ai_settings() );
@@ -349,7 +349,7 @@ class Filter_Orbit_REST_API {
 		$incoming = $request->get_json_params();
 
 		if ( ! is_array( $incoming ) ) {
-			return new WP_Error( 'invalid_language', __( 'Language settings must be an object.', 'filterorbit-advanced-product-filters-for-woocommerce' ), array( 'status' => 400 ) );
+			return new WP_Error( 'invalid_language', __( 'Language settings must be an object.', 'filterorbit-product-filters' ), array( 'status' => 400 ) );
 		}
 
 		$sanitized = $this->sanitize_language_strings( $incoming );
@@ -402,19 +402,19 @@ class Filter_Orbit_REST_API {
 		$sources = array(
 			array(
 				'id'    => 'price',
-				'label' => __( 'Price', 'filterorbit-advanced-product-filters-for-woocommerce' ),
+				'label' => __( 'Price', 'filterorbit-product-filters' ),
 				'type'  => 'range',
 				'field' => 'price',
 			),
 			array(
 				'id'    => 'category',
-				'label' => __( 'Product Category', 'filterorbit-advanced-product-filters-for-woocommerce' ),
+				'label' => __( 'Product Category', 'filterorbit-product-filters' ),
 				'type'  => 'checkbox',
 				'field' => 'category',
 			),
 			array(
 				'id'    => 'brand',
-				'label' => __( 'Product Tag', 'filterorbit-advanced-product-filters-for-woocommerce' ),
+				'label' => __( 'Product Tag', 'filterorbit-product-filters' ),
 				'type'  => 'checkbox',
 				'field' => 'brand',
 			),
@@ -430,7 +430,7 @@ class Filter_Orbit_REST_API {
 					'id'      => $field,
 					'label'   => sprintf(
 						/* translators: %s: WooCommerce attribute label */
-						__( '%s (Variant)', 'filterorbit-advanced-product-filters-for-woocommerce' ),
+						__( '%s (Variant)', 'filterorbit-product-filters' ),
 						$attribute->attribute_label
 					),
 					'type'    => 'checkbox',
@@ -584,7 +584,7 @@ class Filter_Orbit_REST_API {
 				'id'      => $field,
 				'label'   => sprintf(
 					/* translators: %s: custom attribute label */
-					__( '%s (Variant)', 'filterorbit-advanced-product-filters-for-woocommerce' ),
+					__( '%s (Variant)', 'filterorbit-product-filters' ),
 					$meta['label']
 				),
 				'type'    => 'checkbox',

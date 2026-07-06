@@ -34,8 +34,8 @@ class Filter_Orbit_Admin {
 	 */
 	public function register_menus() {
 		add_menu_page(
-			__( 'FilterOrbit', 'filterorbit-advanced-product-filters-for-woocommerce' ),
-			__( 'FilterOrbit', 'filterorbit-advanced-product-filters-for-woocommerce' ),
+			__( 'FilterOrbit', 'filterorbit-product-filters' ),
+			__( 'FilterOrbit', 'filterorbit-product-filters' ),
 			'manage_woocommerce',
 			self::MENU_SLUG,
 			array( $this, 'render_admin_page' ),
@@ -45,8 +45,8 @@ class Filter_Orbit_Admin {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Filter Designer', 'filterorbit-advanced-product-filters-for-woocommerce' ),
-			__( 'Filter Designer', 'filterorbit-advanced-product-filters-for-woocommerce' ),
+			__( 'Filter Designer', 'filterorbit-product-filters' ),
+			__( 'Filter Designer', 'filterorbit-product-filters' ),
 			'manage_woocommerce',
 			self::MENU_SLUG,
 			array( $this, 'render_admin_page' )
@@ -54,8 +54,8 @@ class Filter_Orbit_Admin {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Settings', 'filterorbit-advanced-product-filters-for-woocommerce' ),
-			__( 'Settings', 'filterorbit-advanced-product-filters-for-woocommerce' ),
+			__( 'Settings', 'filterorbit-product-filters' ),
+			__( 'Settings', 'filterorbit-product-filters' ),
 			'manage_woocommerce',
 			self::MENU_SLUG . '-settings',
 			array( $this, 'render_admin_page' )
@@ -63,8 +63,8 @@ class Filter_Orbit_Admin {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'AI Settings', 'filterorbit-advanced-product-filters-for-woocommerce' ),
-			__( 'AI Settings', 'filterorbit-advanced-product-filters-for-woocommerce' ),
+			__( 'AI Settings', 'filterorbit-product-filters' ),
+			__( 'AI Settings', 'filterorbit-product-filters' ),
 			'manage_woocommerce',
 			self::MENU_SLUG . '-ai',
 			array( $this, 'render_admin_page' )
@@ -72,8 +72,8 @@ class Filter_Orbit_Admin {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Language Settings', 'filterorbit-advanced-product-filters-for-woocommerce' ),
-			__( 'Language', 'filterorbit-advanced-product-filters-for-woocommerce' ),
+			__( 'Language Settings', 'filterorbit-product-filters' ),
+			__( 'Language', 'filterorbit-product-filters' ),
 			'manage_woocommerce',
 			self::MENU_SLUG . '-language',
 			array( $this, 'render_admin_page' )
@@ -239,13 +239,13 @@ body.filter-orbit-admin-page #screen-meta-links { display: none !important; }'
 				'languageSettingsUrl' => admin_url( 'admin.php?page=' . self::MENU_SLUG . '-language' ),
 				'designerUrl'        => admin_url( 'admin.php?page=' . self::MENU_SLUG ),
 				'i18n'               => array(
-					'pluginName'       => __( 'FilterOrbit', 'filterorbit-advanced-product-filters-for-woocommerce' ),
-					'filterDesigner'   => __( 'Filter Designer', 'filterorbit-advanced-product-filters-for-woocommerce' ),
-					'settings'         => __( 'Settings', 'filterorbit-advanced-product-filters-for-woocommerce' ),
-					'aiSettings'       => __( 'AI Settings', 'filterorbit-advanced-product-filters-for-woocommerce' ),
-					'languageSettings' => __( 'Language', 'filterorbit-advanced-product-filters-for-woocommerce' ),
-					'saved'          => __( 'Saved successfully.', 'filterorbit-advanced-product-filters-for-woocommerce' ),
-					'saveError'      => __( 'Could not save. Please try again.', 'filterorbit-advanced-product-filters-for-woocommerce' ),
+					'pluginName'       => __( 'FilterOrbit', 'filterorbit-product-filters' ),
+					'filterDesigner'   => __( 'Filter Designer', 'filterorbit-product-filters' ),
+					'settings'         => __( 'Settings', 'filterorbit-product-filters' ),
+					'aiSettings'       => __( 'AI Settings', 'filterorbit-product-filters' ),
+					'languageSettings' => __( 'Language', 'filterorbit-product-filters' ),
+					'saved'          => __( 'Saved successfully.', 'filterorbit-product-filters' ),
+					'saveError'      => __( 'Could not save. Please try again.', 'filterorbit-product-filters' ),
 				),
 			)
 		);

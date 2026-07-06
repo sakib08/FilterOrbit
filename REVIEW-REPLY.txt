@@ -1,0 +1,11 @@
+Hello,
+
+I have uploaded an updated version under sakibbd08.
+
+Please change the plugin slug to: filterorbit-product-filters
+
+For ownership verification, I added the DNS TXT record at pluginpros.co with the value: wordpressorg-sakibbd08-verification
+
+Source code: https://github.com/sakib08/FilterOrbit
+
+Thank you.

@@ -1,6 +1,6 @@
 {
   "name": "filter-orbit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "FilterOrbit: Advanced WooCommerce Product Filters — zero-request filtering with React admin",
   "type": "module",
   "main": "./dist/ppros-ecom-filter.umd.cjs",

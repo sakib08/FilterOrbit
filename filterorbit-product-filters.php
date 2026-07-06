@@ -3,7 +3,7 @@
  * Plugin Name:       FilterOrbit: Advanced Product Filters for WooCommerce
  * Plugin URI:        https://pluginpros.co
  * Description:       Advanced zero-request product filters for WooCommerce with AI, visual discovery, and a React-powered filter designer.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'FILTER_ORBIT_VERSION', '1.0.0' );
+define( 'FILTER_ORBIT_VERSION', '1.0.1' );
 define( 'FILTER_ORBIT_FILE', __FILE__ );
 define( 'FILTER_ORBIT_PATH', plugin_dir_path( __FILE__ ) );
 define( 'FILTER_ORBIT_URL', plugin_dir_url( __FILE__ ) );

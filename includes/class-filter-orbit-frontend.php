@@ -96,6 +96,13 @@ class Filter_Orbit_Frontend {
 			);
 		}
 
+		wp_enqueue_style(
+			'filter-orbit-fonts',
+			'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@400;500;600;700&display=swap',
+			array(),
+			null
+		);
+
 		wp_enqueue_script(
 			'filter-orbit-frontend',
 			FILTER_ORBIT_URL . 'assets/frontend/filter-orbit.js',
@@ -274,19 +281,34 @@ class Filter_Orbit_Frontend {
 			$price = $product->get_regular_price();
 		}
 
+		$regular_price = $product->get_regular_price();
+		$sale_price    = $product->get_sale_price();
+		$on_sale       = $product->is_on_sale();
+		$in_stock      = $product->is_in_stock();
+
 		$data = array(
-			'id'          => (string) $product->get_id(),
-			'title'       => $product->get_name(),
-			'description' => wp_strip_all_tags( $product->get_short_description() ),
-			'price'       => (float) $price,
-			'currency'    => get_woocommerce_currency(),
+			'id'            => (string) $product->get_id(),
+			'title'         => $product->get_name(),
+			'description'   => wp_strip_all_tags( $product->get_short_description() ),
+			'price'         => (float) $price,
+			'regularPrice'  => $regular_price ? (float) $regular_price : null,
+			'onSale'        => $on_sale,
+			'inStock'       => $in_stock,
+			'stockStatus'   => $product->get_stock_status(),
+			'reviewCount'   => (int) $product->get_review_count(),
+			'currency'      => get_woocommerce_currency(),
 			// Store as array so multi-category/tag products match all their values.
-			'category'    => $categories,
-			'brand'       => $tags,
-			'rating'      => (float) $product->get_average_rating(),
-			'imageUrl'    => wp_get_attachment_image_url( $product->get_image_id(), 'medium' ) ?: '',
-			'isVariable'  => $product->is_type( 'variable' ),
+			'category'      => $categories,
+			'brand'         => $tags,
+			'rating'        => (float) $product->get_average_rating(),
+			'imageUrl'      => wp_get_attachment_image_url( $product->get_image_id(), 'medium' ) ?: '',
+			'isVariable'    => $product->is_type( 'variable' ),
+			'isNew'         => (bool) get_post_meta( $product->get_id(), '_is_new', true ),
 		);
+
+		if ( $on_sale && $sale_price ) {
+			$data['price'] = (float) $sale_price;
+		}
 
 		self::map_product_attributes( $data, $product );
 

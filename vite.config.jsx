@@ -1,6 +1,5 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { resolve } from "path";
 import dts from "vite-plugin-dts";
 
 export default defineConfig(({ mode }) => {
@@ -16,7 +15,7 @@ export default defineConfig(({ mode }) => {
       ],
       build: {
         lib: {
-          entry: resolve(__dirname, "src/lib/index.ts"),
+          entry: "src/lib/index.jsx",
           name: "PprosEcomFilter",
           fileName: "ppros-ecom-filter",
           formats: ["es", "umd"],
@@ -41,7 +40,7 @@ export default defineConfig(({ mode }) => {
     root: "demo",
     resolve: {
       alias: {
-        "ppros-ecom-filter": resolve(__dirname, "src/lib/index.ts"),
+        "ppros-ecom-filter": "src/lib/index.jsx",
       },
     },
   };

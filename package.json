@@ -23,15 +23,15 @@
     "uninstall.php"
   ],
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --config vite.config.jsx",
     "build": "npm run build:lib && npm run build:assets",
-    "build:lib": "tsc -p tsconfig.lib.json && vite build --mode library",
+    "build:lib": "vite build --config vite.config.jsx --mode library",
     "build:admin": "webpack --config webpack.config.cjs --config-name admin",
     "build:frontend": "webpack --config webpack.config.cjs --config-name frontend",
     "build:assets": "webpack --config webpack.config.cjs",
     "watch:admin": "webpack --config webpack.config.cjs --config-name admin --watch",
     "watch:frontend": "webpack --config webpack.config.cjs --config-name frontend --watch",
-    "preview": "vite preview",
+    "preview": "vite preview --config vite.config.jsx",
     "lint": "tsc --noEmit",
     "build:plugin": "node scripts/build-plugin.mjs"
   },

@@ -57,16 +57,16 @@ function defaultPageLayout() {
   };
 }
 
-function ResultsBar({ total, onClear, accentColor = "#8b5cf6" }) {
+function ResultsBar({ total, onClear, accentColor = "#7c3aed" }) {
   const lang = useLanguage();
   return (
-    <div className="ppros_ecom_filter-flex ppros_ecom_filter-justify-between ppros_ecom_filter-items-center ppros_ecom_filter-px-1 ppros_ecom_filter-py-2">
+    <div className="ppros_ecom_filter-flex ppros_ecom_filter-justify-between ppros_ecom_filter-items-center ppros_ecom_filter-px-1 ppros_ecom_filter-py-3 ppros_ecom_filter-border-b ppros_ecom_filter-border-slate-100">
       <span className="ppros_ecom_filter-text-sm ppros_ecom_filter-font-semibold ppros_ecom_filter-text-slate-800">
         {total.toLocaleString()} {lang.products_label}
       </span>
       <button
         type="button"
-        className="ppros_ecom_filter-text-sm ppros_ecom_filter-font-medium hover:ppros_ecom_filter-underline"
+        className="ppros_ecom_filter-text-sm ppros_ecom_filter-font-medium ppros_ecom_filter-text-accent hover:ppros_ecom_filter-underline"
         style={{ color: accentColor }}
         onClick={onClear}
       >
@@ -144,8 +144,9 @@ export function FilterOrbitLayout({
             : (n) => `${n}`;
 
       content = (
-        <div className="ppros_ecom_filter-panel">
-          <RangeSliderHistogram
+        <div className="ppros_ecom_filter-filter-section">
+          <div className="ppros_ecom_filter-filter-section-body ppros_ecom_filter-pt-4">
+            <RangeSliderHistogram
             key={`${def.id}-${filterResetKey}`}
             label={def.label}
             unit={def.unit}
@@ -158,6 +159,7 @@ export function FilterOrbitLayout({
             formatValue={formatValue}
             onChange={(lo, hi) => setRangeFilter(def.id, lo, hi)}
           />
+          </div>
         </div>
       );
     } else if (def.type === "visual" && def.visualOptions) {
@@ -177,11 +179,11 @@ export function FilterOrbitLayout({
         <PillFilterGroup
           label={def.label}
           filterId={def.id}
+          field={def.field}
           options={opts}
           selected={filterState[def.id] ?? []}
           onToggle={(v) => toggleFilter(def.id, v)}
-          buttonColor={ui.buttonColor}
-          accentColor={ui.accentColor}
+          displayMode={def.displayMode}
         />
       );
     }
@@ -256,7 +258,6 @@ export function FilterOrbitLayout({
           <ProductGrid
             products={result.products}
             columns={block.productGridColumns ?? 3}
-            accentColor={ui.accentColor}
           />
         );
         break;
@@ -278,23 +279,29 @@ export function FilterOrbitLayout({
   return (
     <LanguageProvider strings={language}>
       <div
-        className={`ppros_ecom_filter-root filter-orbit-layout ppros_ecom_filter-w-full ${className}`}
+        className={`ppros_ecom_filter-root filter-orbit-layout filter-orbit-root ppros_ecom_filter-w-full ${className}`}
         style={{
           width: "100%",
           maxWidth: "100%",
           display: "grid",
           gridTemplateColumns: gridTemplateColumns(columns),
-          gap: "1rem",
+          gap: "1.5rem",
           alignItems: "start",
         }}
       >
         {columns.map((col, colIndex) => {
           const items = getColumnItems(activeFilters, blocks, colIndex);
+          const isFilterColumn = colIndex === 0 && items.some((i) => i.kind === "filter");
 
           return (
             <div
               key={col.id}
-              className="filter-orbit-column ppros_ecom_filter-min-w-0 ppros_ecom_filter-space-y-4"
+              className={[
+                "filter-orbit-column ppros_ecom_filter-min-w-0",
+                isFilterColumn
+                  ? "ppros_ecom_filter-space-y-3"
+                  : "ppros_ecom_filter-space-y-4",
+              ].join(" ")}
             >
               {items.map((item, idx) => {
                 if (item.kind === "filter") {

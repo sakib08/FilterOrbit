@@ -1,16 +1,14 @@
-import type { FilterDefinition, Product, VisualFilterOption } from "../../src/lib";
-
 /* ── Helpers ──────────────────────────────────────────────────────────────── */
-const img = (seed: string) => `https://picsum.photos/seed/${seed}/480/340`;
+const img = (seed) => `https://picsum.photos/seed/${seed}/480/340`;
 
-const colorSwatch = (hex: string, label: string): VisualFilterOption => ({
+const colorSwatch = (hex, label) => ({
   id: label.toLowerCase().replace(/\s/g, "-"),
   label,
   hexColor: hex,
 });
 
 /* ── Vendor metadata (used in UI for colored chips) ──────────────────────── */
-export const VENDORS: Record<string, { color: string; bg: string; emoji: string }> = {
+export const VENDORS = {
   "ToolMart Pro":    { color: "#ea580c", bg: "#fff7ed", emoji: "🔧" },
   "GardenWorld":     { color: "#16a34a", bg: "#f0fdf4", emoji: "🌿" },
   "WatchVault":      { color: "#ca8a04", bg: "#fefce8", emoji: "⌚" },
@@ -19,7 +17,7 @@ export const VENDORS: Record<string, { color: string; bg: string; emoji: string 
 };
 
 /* ── Filter definitions ───────────────────────────────────────────────────── */
-export const sampleFilters: FilterDefinition[] = [
+export const sampleFilters = [
   {
     id: "vendor",
     label: "Vendors",
@@ -135,13 +133,13 @@ export const sampleFilters: FilterDefinition[] = [
 ];
 
 /* ── Products (20 dummy items) ────────────────────────────────────────────── */
-export const sampleProducts: Product[] = [
+export const sampleProducts = [
   /* ── Power Tools ── */
   {
     id: "pt-1",
     title: "DeWalt 20V MAX XR Cordless Drill",
     description: "Brushless motor delivers up to 57% more run time over brushed. Compact design, ideal for tight spaces.",
-    price: 189, rating: 4.8, weight: 1780,
+    price: 189, regularPrice: 219, onSale: true, rating: 4.8, reviewCount: 142, weight: 1780,
     vendor: "ToolMart Pro", category: "power tools",
     brand: "DeWalt", powerSource: "cordless", color: "black", style: "industrial",
     imageUrl: img("dewalt-drill"), tags: ["drill", "cordless", "brushless"],
@@ -196,7 +194,7 @@ export const sampleProducts: Product[] = [
     id: "gd-1",
     title: "Husqvarna 450X Automower",
     description: "Fully autonomous robotic mower for complex garden areas up to 0.5 acres. Weather-proof.",
-    price: 599, rating: 4.8, weight: 4600,
+    price: 599, regularPrice: 699, onSale: true, isNew: true, rating: 4.8, reviewCount: 89, weight: 4600,
     vendor: "GardenWorld", category: "gardening",
     brand: "Husqvarna", powerSource: "electric", color: "black", style: "modern",
     imageUrl: img("automower"), tags: ["robotic mower", "autonomous"],
@@ -205,7 +203,7 @@ export const sampleProducts: Product[] = [
     id: "gd-2",
     title: "Bosch EasyHedgeCut 18-45",
     description: "Cordless hedge trimmer with 45 cm blade length. Suitable for light to medium hedges.",
-    price: 89, rating: 4.3, weight: 2200,
+    price: 89, rating: 4.3, reviewCount: 24, inStock: false, weight: 2200,
     vendor: "GardenWorld", category: "gardening",
     brand: "Bosch", powerSource: "cordless", color: "green", style: "modern",
     imageUrl: img("hedge-trimmer"), tags: ["hedge", "trimmer", "cordless"],

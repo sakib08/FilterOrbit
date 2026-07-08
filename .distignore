@@ -15,10 +15,11 @@ package-lock.json
 tsconfig*.json
 tailwind.config.js
 postcss.config.js
-vite.config.ts
+vite.config.jsx
 README.md
 demo
 build
 dist
 scripts
 REVIEW-REPLY.txt
+SVN-DEPLOY.md

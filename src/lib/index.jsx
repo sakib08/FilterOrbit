@@ -32,15 +32,3 @@ export {
   getRecommendedFilterIds,
   buildPersonalizationProfile,
 } from "./utils/personalization";
-
-export type {
-  Product,
-  FilterDefinition,
-  FilterState,
-  FilterValue,
-  VisualFilterOption,
-  StoreOption,
-  EcomFilterConfig,
-  EcomFilterResult,
-  BrowseEvent,
-} from "./types";

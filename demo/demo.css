@@ -3,13 +3,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Demo layout helpers ─────────────────────────────────────────────────── */
 .demo-root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #f5f3ff;
-  font-family: "Inter", system-ui, sans-serif;
-  color: #0f172a;
+  background: #f9f8f6;
+  font-family: "DM Sans", var(--font-sans), system-ui, sans-serif;
+  color: #1e293b;
 }

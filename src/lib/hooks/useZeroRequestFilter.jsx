@@ -1,10 +1,4 @@
 import { useCallback, useMemo, useState } from "react";
-import type {
-  EcomFilterConfig,
-  EcomFilterResult,
-  FilterState,
-  Product,
-} from "../types";
 import { filterProducts, buildHistogram, getRangeBounds } from "../utils/filterEngine";
 import {
   ensureProductEmbeddings,
@@ -14,7 +8,7 @@ import {
 import { parseNaturalLanguageLocally } from "../utils/naturalLanguage";
 import { personalizeFilterOrder } from "../utils/personalization";
 
-export function useZeroRequestFilter(config: EcomFilterConfig) {
+export function useZeroRequestFilter(config) {
   const {
     products: rawProducts,
     filters: rawFilters,
@@ -24,9 +18,8 @@ export function useZeroRequestFilter(config: EcomFilterConfig) {
     onEmbedQuery,
   } = config;
 
-  // Guard against undefined/null so nothing downstream crashes on first render
   const safeProducts = Array.isArray(rawProducts) ? rawProducts : [];
-  const safeFilters  = Array.isArray(rawFilters)  ? rawFilters  : [];
+  const safeFilters = Array.isArray(rawFilters) ? rawFilters : [];
 
   const products = useMemo(
     () => ensureProductEmbeddings(safeProducts),
@@ -38,9 +31,9 @@ export function useZeroRequestFilter(config: EcomFilterConfig) {
     [safeFilters, hideIrrelevantFilters]
   );
 
-  const [filterState, setFilterState] = useState<FilterState>({});
+  const [filterState, setFilterState] = useState({});
   const [textQuery, setTextQuery] = useState("");
-  const [semanticIds, setSemanticIds] = useState<Set<string> | undefined>();
+  const [semanticIds, setSemanticIds] = useState();
   const [aiLoading, setAiLoading] = useState(false);
   const [filterResetKey, setFilterResetKey] = useState(0);
 
@@ -60,7 +53,7 @@ export function useZeroRequestFilter(config: EcomFilterConfig) {
     [products, filterState, textQuery, semanticIds, filters]
   );
 
-  const result: EcomFilterResult = useMemo(
+  const result = useMemo(
     () => ({
       products: filteredProducts,
       total: filteredProducts.length,
@@ -69,27 +62,24 @@ export function useZeroRequestFilter(config: EcomFilterConfig) {
     [filteredProducts, filterState]
   );
 
-  const toggleFilter = useCallback(
-    (filterId: string, value: string | number | boolean, multi = true) => {
-      setFilterState((prev) => {
-        const current = prev[filterId] ?? [];
-        const exists = current.some((v) => v === value);
-        let next: (string | number | boolean)[];
-        if (multi) {
-          next = exists
-            ? current.filter((v) => v !== value)
-            : [...current, value];
-        } else {
-          next = exists ? [] : [value];
-        }
-        return { ...prev, [filterId]: next };
-      });
-    },
-    []
-  );
+  const toggleFilter = useCallback((filterId, value, multi = true) => {
+    setFilterState((prev) => {
+      const current = prev[filterId] ?? [];
+      const exists = current.some((v) => v === value);
+      let next;
+      if (multi) {
+        next = exists
+          ? current.filter((v) => v !== value)
+          : [...current, value];
+      } else {
+        next = exists ? [] : [value];
+      }
+      return { ...prev, [filterId]: next };
+    });
+  }, []);
 
   const setRangeFilter = useCallback(
-    (filterId: string, minVal: number, maxVal: number) => {
+    (filterId, minVal, maxVal) => {
       setFilterState((prev) => {
         const def = filters.find((f) => f.id === filterId);
         if (def?.type === "range") {
@@ -120,10 +110,10 @@ export function useZeroRequestFilter(config: EcomFilterConfig) {
   }, []);
 
   const applyNaturalLanguage = useCallback(
-    async (query: string) => {
+    async (query) => {
       setAiLoading(true);
       try {
-        let next: FilterState;
+        let next;
         if (onNaturalLanguageQuery) {
           next = await onNaturalLanguageQuery(query);
         } else {
@@ -139,8 +129,8 @@ export function useZeroRequestFilter(config: EcomFilterConfig) {
   );
 
   const applySemanticStyle = useCallback(
-    async (styleDescription: string, sourceProduct?: Product) => {
-      let embedding: number[];
+    async (styleDescription, sourceProduct) => {
+      let embedding;
       if (onEmbedQuery) {
         embedding = await onEmbedQuery(styleDescription);
       } else if (sourceProduct?.embedding) {

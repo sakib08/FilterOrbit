@@ -81,8 +81,8 @@ class Filter_Orbit_Frontend {
 			return;
 		}
 
-		$this->assets_enqueued  = true;
-		$this->should_enqueue   = true;
+		$this->assets_enqueued = true;
+		$this->should_enqueue  = true;
 
 		$js_version  = filemtime( $js_path );
 		$css_version = file_exists( $css_path ) ? filemtime( $css_path ) : FILTER_ORBIT_VERSION;
@@ -96,12 +96,59 @@ class Filter_Orbit_Frontend {
 			);
 		}
 
-		wp_enqueue_style(
-			'filter-orbit-fonts',
-			'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@400;500;600;700&display=swap',
-			array(),
-			null
+		$settings    = Filter_Orbit::get_settings();
+		$font_family = isset( $settings['google_font'] ) ? $settings['google_font'] : 'DM Sans';
+		$font_url    = Filter_Orbit_Activator::google_font_css_url( $font_family );
+		$font_stack  = Filter_Orbit_Activator::google_font_stack( $font_family );
+		$label_size  = Filter_Orbit_Activator::sanitize_font_size( $settings['label_font_size'] ?? 11, 11 );
+		$option_size = Filter_Orbit_Activator::sanitize_font_size( $settings['option_font_size'] ?? 14, 14 );
+
+		if ( $font_url ) {
+			wp_enqueue_style(
+				'filter-orbit-fonts',
+				$font_url,
+				array(),
+				null
+			);
+		}
+
+		$font_css = sprintf(
+			'.filter-orbit-root[data-filter-orbit],'
+			. '.filter-orbit-root[data-filter-orbit] .filter-orbit-root,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-root{'
+			. '--font-sans:%1$s !important;'
+			. '--font-display:%1$s !important;'
+			. '--fo-label-size:%2$spx !important;'
+			. '--fo-option-size:%3$spx !important;'
+			. 'font-family:%1$s !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] *,'
+			. '.filter-orbit-root[data-filter-orbit] button,'
+			. '.filter-orbit-root[data-filter-orbit] input,'
+			. '.filter-orbit-root[data-filter-orbit] select,'
+			. '.filter-orbit-root[data-filter-orbit] textarea,'
+			. '.filter-orbit-root[data-filter-orbit] label,'
+			. '.filter-orbit-root[data-filter-orbit] h1,'
+			. '.filter-orbit-root[data-filter-orbit] h2,'
+			. '.filter-orbit-root[data-filter-orbit] h3,'
+			. '.filter-orbit-root[data-filter-orbit] h4,'
+			. '.filter-orbit-root[data-filter-orbit] p,'
+			. '.filter-orbit-root[data-filter-orbit] span,'
+			. '.filter-orbit-root[data-filter-orbit] a{'
+			. 'font-family:inherit !important;'
+			. '}',
+			$font_stack,
+			$label_size,
+			$option_size
 		);
+
+		wp_register_style( 'filter-orbit-font-vars', false, array(), null );
+		wp_enqueue_style( 'filter-orbit-font-vars' );
+		wp_add_inline_style( 'filter-orbit-font-vars', $font_css );
+
+		if ( file_exists( $css_path ) ) {
+			wp_add_inline_style( 'filter-orbit-frontend', $font_css );
+		}
 
 		wp_enqueue_script(
 			'filter-orbit-frontend',
@@ -165,7 +212,24 @@ class Filter_Orbit_Frontend {
 	 * @return string
 	 */
 	private function get_mount_markup() {
-		return '<div class="filter-orbit-root" data-filter-orbit></div>';
+		$settings    = Filter_Orbit::get_settings();
+		$font_family = isset( $settings['google_font'] ) ? $settings['google_font'] : 'DM Sans';
+		$font_stack  = Filter_Orbit_Activator::google_font_stack( $font_family );
+		$label_size  = Filter_Orbit_Activator::sanitize_font_size( $settings['label_font_size'] ?? 11, 11 );
+		$option_size = Filter_Orbit_Activator::sanitize_font_size( $settings['option_font_size'] ?? 14, 14 );
+
+		$style = sprintf(
+			'--font-sans:%1$s;--font-display:%1$s;font-family:%1$s;--fo-label-size:%2$spx;--fo-option-size:%3$spx;',
+			$font_stack,
+			$label_size,
+			$option_size
+		);
+
+		return sprintf(
+			'<div class="filter-orbit-root" data-filter-orbit data-google-font="%s" style="%s"></div>',
+			esc_attr( $font_family ),
+			esc_attr( $style )
+		);
 	}
 
 	/**

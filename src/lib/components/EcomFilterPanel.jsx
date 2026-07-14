@@ -8,6 +8,7 @@ import { PersonalizedFilters } from "./PersonalizedFilters";
 import { RangeSliderHistogram } from "./RangeSliderHistogram";
 import { GlobalSemanticFilter } from "./GlobalSemanticFilter";
 import { PillFilterGroup } from "./PillFilterGroup";
+import { CheckboxFilterGroup } from "./CheckboxFilterGroup";
 import {
   getDefaultUiColorsForBlock,
   getDefaultUiColorsForFilter,
@@ -125,6 +126,22 @@ export function EcomFilterPanel({
 
     if (def.options || def.type === "checkbox") {
       const opts = getFilterOptions(def, products);
+      const displayMode = def.displayMode;
+
+      if (displayMode === "checkbox" || displayMode === "toggle") {
+        return (
+          <CheckboxFilterGroup
+            key={def.id}
+            label={def.label}
+            filterId={def.id}
+            options={opts}
+            selected={filterState[def.id] ?? []}
+            onToggle={(v) => toggleFilter(def.id, v)}
+            variant={displayMode}
+          />
+        );
+      }
+
       return (
         <PillFilterGroup
           key={def.id}
@@ -134,7 +151,9 @@ export function EcomFilterPanel({
           options={opts}
           selected={filterState[def.id] ?? []}
           onToggle={(v) => toggleFilter(def.id, v)}
-          displayMode={def.displayMode}
+          buttonColor={ui.buttonColor}
+          accentColor={ui.accentColor}
+          variant={displayMode === "size" ? "size" : "pill"}
         />
       );
     }

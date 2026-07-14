@@ -24,6 +24,13 @@ const FILTER_TYPES = [
   { value: "visual", label: "Visual Discovery" },
 ];
 
+const DISPLAY_MODES = [
+  { value: "pills", label: "Pills" },
+  { value: "checkbox", label: "Listed checkbox" },
+  { value: "size", label: "Size buttons" },
+  { value: "toggle", label: "Toggle switches" },
+];
+
 const emptyFilter = (source) => {
   const type = source?.type || "checkbox";
   const colors = getDefaultUiColorsForFilter(type);
@@ -38,6 +45,7 @@ const emptyFilter = (source) => {
     ...colors,
     options: Array.isArray(source?.options) ? source.options : [],
     variant: !!source?.variant,
+    displayMode: source?.displayMode || (type === "checkbox" ? "pills" : undefined),
     ...(type === "range" ? { min: 0, max: 1000, step: 5, unit: "USD" } : {}),
   };
 };
@@ -359,7 +367,15 @@ export default function FilterDesigner() {
                   <span className="fo-mb-1 fo-block fo-text-xs fo-font-semibold fo-text-slate-500">Type</span>
                   <select
                     value={selectedFilter.type}
-                    onChange={(e) => updateFilter(selectedFilter.id, { type: e.target.value })}
+                    onChange={(e) => {
+                      const type = e.target.value;
+                      updateFilter(selectedFilter.id, {
+                        type,
+                        ...(type === "checkbox" && !selectedFilter.displayMode
+                          ? { displayMode: "pills" }
+                          : {}),
+                      });
+                    }}
                     className="fo-w-full fo-rounded-lg fo-border fo-border-slate-200 fo-px-3 fo-py-2 fo-text-sm"
                   >
                     {FILTER_TYPES.map((t) => (
@@ -367,6 +383,25 @@ export default function FilterDesigner() {
                     ))}
                   </select>
                 </label>
+
+                {selectedFilter.type === "checkbox" && (
+                  <label className="fo-block">
+                    <span className="fo-mb-1 fo-block fo-text-xs fo-font-semibold fo-text-slate-500">
+                      Display style
+                    </span>
+                    <select
+                      value={selectedFilter.displayMode || "pills"}
+                      onChange={(e) =>
+                        updateFilter(selectedFilter.id, { displayMode: e.target.value })
+                      }
+                      className="fo-w-full fo-rounded-lg fo-border fo-border-slate-200 fo-px-3 fo-py-2 fo-text-sm"
+                    >
+                      {DISPLAY_MODES.map((m) => (
+                        <option key={m.value} value={m.value}>{m.label}</option>
+                      ))}
+                    </select>
+                  </label>
+                )}
 
                 <label className="fo-block">
                   <span className="fo-mb-1 fo-block fo-text-xs fo-font-semibold fo-text-slate-500">Product field</span>

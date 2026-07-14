@@ -11,9 +11,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ["Outfit", "var(--font-display)", "system-ui", "sans-serif"],
-        sans: ["DM Sans", "var(--font-sans)", "system-ui", "sans-serif"],
-        ppros: ["DM Sans", "var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        ppros: ["var(--font-sans)", "system-ui", "sans-serif"],
       },
       fontSize: {
         micro: ["0.625rem", { lineHeight: "1rem" }],

@@ -1,12 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 .filter-orbit-root {
-  --font-display: "Outfit", system-ui, sans-serif;
-  --font-sans: "DM Sans", system-ui, sans-serif;
   --font-size: 16px;
   --color-cream: #f9f8f6;
   --color-accent: #7c3aed;
@@ -14,7 +11,7 @@
   --color-coral: #f4717f;
   --color-star: #fbbf24;
 
-  font-family: var(--font-sans);
+  font-family: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
   font-size: var(--font-size);
   line-height: 1.5;
   color: #1e293b;

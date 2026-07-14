@@ -238,6 +238,8 @@ body.filter-orbit-admin-page #screen-meta-links { display: none !important; }'
 				'aiSettingsUrl'      => admin_url( 'admin.php?page=' . self::MENU_SLUG . '-ai' ),
 				'languageSettingsUrl' => admin_url( 'admin.php?page=' . self::MENU_SLUG . '-language' ),
 				'designerUrl'        => admin_url( 'admin.php?page=' . self::MENU_SLUG ),
+				'googleFonts'        => Filter_Orbit_Activator::google_fonts(),
+				'fontSizeOptions'    => Filter_Orbit_Activator::font_size_options(),
 				'i18n'               => array(
 					'pluginName'       => __( 'FilterOrbit', 'filterorbit-product-filters' ),
 					'filterDesigner'   => __( 'Filter Designer', 'filterorbit-product-filters' ),

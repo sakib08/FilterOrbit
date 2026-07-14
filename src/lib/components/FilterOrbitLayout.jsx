@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useZeroRequestFilter } from "../hooks/useZeroRequestFilter";
 import { buildHistogram, getRangeBounds, getFilterOptions } from "../utils/filterEngine";
 import { SearchWithAI } from "./SearchWithAI";
@@ -7,8 +7,8 @@ import { VisualDiscoveryUpload } from "./VisualDiscoveryUpload";
 import { PersonalizedFilters } from "./PersonalizedFilters";
 import { RangeSliderHistogram } from "./RangeSliderHistogram";
 import { PillFilterGroup } from "./PillFilterGroup";
+import { CheckboxFilterGroup } from "./CheckboxFilterGroup";
 import { ProductGrid } from "./ProductGrid";
-import { BlockColorShell } from "./BlockColorShell";
 import {
   getDefaultUiColorsForBlock,
   getDefaultUiColorsForFilter,
@@ -16,6 +16,51 @@ import {
 } from "../utils/blockColors";
 import { LanguageProvider } from "../language/LanguageContext";
 import { useLanguage } from "../language/LanguageContext";
+import { SlidersIcon } from "./icons";
+
+function ChevronIcon() {
+  return (
+    <svg
+      className="ppros_ecom_filter-collapsible-chevron"
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+}
+
+function RangeFilterCollapsible({ label, children, defaultOpen = true }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div
+      className={[
+        "ppros_ecom_filter-collapsible",
+        open ? "ppros_ecom_filter-collapsible-open" : "",
+      ].join(" ")}
+    >
+      <button
+        type="button"
+        className="ppros_ecom_filter-collapsible-trigger"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+      >
+        <span className="ppros_ecom_filter-section-title">{label}</span>
+        <ChevronIcon />
+      </button>
+      {open && (
+        <div className="ppros_ecom_filter-collapsible-body">{children}</div>
+      )}
+    </div>
+  );
+}
 
 function getColumnItems(filters, blocks, colIndex) {
   const items = [
@@ -60,13 +105,16 @@ function defaultPageLayout() {
 function ResultsBar({ total, onClear, accentColor = "#7c3aed" }) {
   const lang = useLanguage();
   return (
-    <div className="ppros_ecom_filter-flex ppros_ecom_filter-justify-between ppros_ecom_filter-items-center ppros_ecom_filter-px-1 ppros_ecom_filter-py-3 ppros_ecom_filter-border-b ppros_ecom_filter-border-slate-100">
-      <span className="ppros_ecom_filter-text-sm ppros_ecom_filter-font-semibold ppros_ecom_filter-text-slate-800">
-        {total.toLocaleString()} {lang.products_label}
+    <div className="ppros_ecom_filter-flex ppros_ecom_filter-justify-between ppros_ecom_filter-items-center ppros_ecom_filter-px-1 ppros_ecom_filter-py-2">
+      <span className="ppros_ecom_filter-text-sm ppros_ecom_filter-text-slate-600">
+        <span className="ppros_ecom_filter-font-semibold ppros_ecom_filter-text-slate-800">
+          {total.toLocaleString()}
+        </span>{" "}
+        {lang.products_label}
       </span>
       <button
         type="button"
-        className="ppros_ecom_filter-text-sm ppros_ecom_filter-font-medium ppros_ecom_filter-text-accent hover:ppros_ecom_filter-underline"
+        className="ppros_ecom_filter-text-sm ppros_ecom_filter-font-medium hover:ppros_ecom_filter-underline"
         style={{ color: accentColor }}
         onClick={onClear}
       >
@@ -131,7 +179,6 @@ export function FilterOrbitLayout({
   const renderFilter = (def, idx = 0) => {
     const defaults = getDefaultUiColorsForFilter(def.type);
     const ui = resolveUiColors(def, defaults);
-    let content = null;
 
     if (def.type === "range") {
       const { min, max } = getRangeBounds(def, products);
@@ -143,10 +190,9 @@ export function FilterOrbitLayout({
             ? (n) => `${n}★`
             : (n) => `${n}`;
 
-      content = (
-        <div className="ppros_ecom_filter-filter-section">
-          <div className="ppros_ecom_filter-filter-section-body ppros_ecom_filter-pt-4">
-            <RangeSliderHistogram
+      return (
+        <RangeFilterCollapsible key={def.id} label={def.label}>
+          <RangeSliderHistogram
             key={`${def.id}-${filterResetKey}`}
             label={def.label}
             unit={def.unit}
@@ -159,121 +205,136 @@ export function FilterOrbitLayout({
             formatValue={formatValue}
             onChange={(lo, hi) => setRangeFilter(def.id, lo, hi)}
           />
+        </RangeFilterCollapsible>
+      );
+    }
+
+    if (def.type === "visual" && def.visualOptions) {
+      return (
+        <div key={def.id} className="ppros_ecom_filter-collapsible ppros_ecom_filter-collapsible-open">
+          <div className="ppros_ecom_filter-collapsible-body ppros_ecom_filter-pt-0">
+            <VisualDiscoveryFilter
+              label={def.label}
+              options={def.visualOptions}
+              selected={filterState[def.id] ?? []}
+              onToggle={(id) => toggleFilter(def.id, id)}
+              accentColor={ui.accentColor}
+            />
           </div>
         </div>
       );
-    } else if (def.type === "visual" && def.visualOptions) {
-      content = (
-        <VisualDiscoveryFilter
-          label={def.label}
-          options={def.visualOptions}
-          selected={filterState[def.id] ?? []}
-          onToggle={(id) => toggleFilter(def.id, id)}
-          accentColor={ui.accentColor}
-        />
-      );
-    } else {
-      const opts = getFilterOptions(def, products);
+    }
 
-      content = (
-        <PillFilterGroup
+    const opts = getFilterOptions(def, products);
+    const displayMode = def.displayMode;
+
+    if (displayMode === "checkbox" || displayMode === "toggle") {
+      return (
+        <CheckboxFilterGroup
+          key={def.id}
           label={def.label}
           filterId={def.id}
-          field={def.field}
           options={opts}
           selected={filterState[def.id] ?? []}
           onToggle={(v) => toggleFilter(def.id, v)}
-          displayMode={def.displayMode}
+          variant={displayMode}
+          collapsible
+          defaultOpen={idx < 4}
         />
       );
     }
 
     return (
-      <BlockColorShell
+      <PillFilterGroup
         key={def.id}
-        color={ui.color}
-        fallback={defaults.color}
-      >
-        {content}
-      </BlockColorShell>
+        label={def.label}
+        filterId={def.id}
+        field={def.field}
+        options={opts}
+        selected={filterState[def.id] ?? []}
+        onToggle={(v) => toggleFilter(def.id, v)}
+        buttonColor={ui.buttonColor}
+        accentColor={ui.accentColor}
+        variant={displayMode === "size" ? "size" : "pill"}
+        collapsible
+        defaultOpen={idx < 4}
+      />
     );
   };
 
   const renderLayoutBlock = (block) => {
     const defaults = getDefaultUiColorsForBlock(block.type);
     const ui = resolveUiColors(block, defaults);
-    let content = null;
 
     switch (block.type) {
       case "nlp_search":
         if (settings.enable_ai_filter === false) return null;
-        content = (
-          <SearchWithAI
-            textQuery={textQuery}
-            onTextChange={setTextQuery}
-            onAISubmit={applyNaturalLanguage}
-            aiLoading={aiLoading}
-            buttonColor={ui.buttonColor}
-            accentColor={ui.accentColor}
-          />
+        return (
+          <div key={block.id}>
+            <SearchWithAI
+              textQuery={textQuery}
+              onTextChange={setTextQuery}
+              onAISubmit={applyNaturalLanguage}
+              aiLoading={aiLoading}
+              buttonColor={ui.buttonColor}
+              accentColor={ui.accentColor}
+            />
+          </div>
         );
-        break;
+
       case "personalized":
         if (settings.enable_personalization === false) return null;
-        content = (
-          <PersonalizedFilters
-            filters={activeFilters}
-            products={products}
-            filterState={filterState}
-            onQuickFilter={(id, v) => toggleFilter(id, v)}
-            buttonColor={ui.buttonColor}
-            barColor={ui.barColor}
-            accentColor={ui.accentColor}
-          />
+        return (
+          <div key={block.id}>
+            <PersonalizedFilters
+              filters={activeFilters}
+              products={products}
+              filterState={filterState}
+              onQuickFilter={(id, v) => toggleFilter(id, v)}
+              buttonColor={ui.buttonColor}
+              barColor={ui.barColor}
+              accentColor={ui.accentColor}
+            />
+          </div>
         );
-        break;
+
       case "visual_upload": {
         const showUpload = showVisualUpload ?? settings.enable_visual_discovery;
         if (!showUpload) return null;
-        content = (
-          <VisualDiscoveryUpload
-            onImageSelect={() => applySemanticStyle("visual style match from uploaded image")}
-            buttonColor={ui.buttonColor}
-            accentColor={ui.accentColor}
-          />
+        return (
+          <div key={block.id}>
+            <VisualDiscoveryUpload
+              onImageSelect={() => applySemanticStyle("visual style match from uploaded image")}
+              buttonColor={ui.buttonColor}
+              accentColor={ui.accentColor}
+            />
+          </div>
         );
-        break;
       }
+
       case "results_bar":
-        content = (
+        return (
           <ResultsBar
+            key={block.id}
             total={result.total}
             onClear={clearFilters}
             accentColor={ui.accentColor}
           />
         );
-        break;
+
       case "products":
-        content = (
-          <ProductGrid
-            products={result.products}
-            columns={block.productGridColumns ?? 3}
-          />
+        return (
+          <div key={block.id} className="ppros_ecom_filter-w-full">
+            <ProductGrid
+              products={result.products}
+              columns={block.productGridColumns ?? 3}
+            />
+          </div>
         );
-        break;
+
       default:
         return null;
     }
-
-    return (
-      <BlockColorShell
-        key={block.id}
-        color={ui.color}
-        fallback={defaults.color}
-      >
-        {content}
-      </BlockColorShell>
-    );
   };
 
   return (
@@ -287,26 +348,74 @@ export function FilterOrbitLayout({
           gridTemplateColumns: gridTemplateColumns(columns),
           gap: "1.5rem",
           alignItems: "start",
+          fontFamily: settings?.google_font
+            ? `"${settings.google_font}", system-ui, sans-serif`
+            : undefined,
+          ["--font-sans"]: settings?.google_font
+            ? `"${settings.google_font}", system-ui, sans-serif`
+            : undefined,
+          ["--font-display"]: settings?.google_font
+            ? `"${settings.google_font}", system-ui, sans-serif`
+            : undefined,
+          ["--fo-label-size"]: settings?.label_font_size
+            ? `${Number(settings.label_font_size)}px`
+            : undefined,
+          ["--fo-option-size"]: settings?.option_font_size
+            ? `${Number(settings.option_font_size)}px`
+            : undefined,
         }}
       >
         {columns.map((col, colIndex) => {
           const items = getColumnItems(activeFilters, blocks, colIndex);
-          const isFilterColumn = colIndex === 0 && items.some((i) => i.kind === "filter");
+          const filterItems = items.filter((i) => i.kind === "filter");
+          const blockItems = items.filter((i) => i.kind === "block");
+          const isFilterColumn = colIndex === 0 && filterItems.length > 0;
 
+          if (isFilterColumn) {
+            const firstFilterOrder =
+              filterItems.length > 0
+                ? Math.min(...filterItems.map((i) => i.order))
+                : Infinity;
+            const lastFilterOrder =
+              filterItems.length > 0
+                ? Math.max(...filterItems.map((i) => i.order))
+                : -Infinity;
+
+            const blocksAbove = blockItems.filter((b) => b.order < firstFilterOrder);
+            const blocksBelow = blockItems.filter((b) => b.order > lastFilterOrder);
+
+            return (
+              <div
+                key={col.id}
+                className="filter-orbit-column ppros_ecom_filter-min-w-0 ppros_ecom_filter-space-y-3"
+              >
+                {blocksAbove.map((item) => renderLayoutBlock(item.data))}
+
+                <div>
+                  <div className="ppros_ecom_filter-filters-heading">
+                    <SlidersIcon size={15} />
+                    <span>Filters</span>
+                  </div>
+                  <div className="ppros_ecom_filter-filter-sidebar">
+                    {filterItems.map((item, idx) =>
+                      renderFilter(item.data, idx)
+                    )}
+                  </div>
+                </div>
+
+                {blocksBelow.map((item) => renderLayoutBlock(item.data))}
+              </div>
+            );
+          }
+
+          /* Products / non-filter column */
           return (
             <div
               key={col.id}
-              className={[
-                "filter-orbit-column ppros_ecom_filter-min-w-0",
-                isFilterColumn
-                  ? "ppros_ecom_filter-space-y-3"
-                  : "ppros_ecom_filter-space-y-4",
-              ].join(" ")}
+              className="filter-orbit-column ppros_ecom_filter-min-w-0 ppros_ecom_filter-space-y-4"
             >
-              {items.map((item, idx) => {
-                if (item.kind === "filter") {
-                  return renderFilter(item.data, idx);
-                }
+              {items.map((item) => {
+                if (item.kind === "filter") return renderFilter(item.data);
                 return renderLayoutBlock(item.data);
               })}
             </div>

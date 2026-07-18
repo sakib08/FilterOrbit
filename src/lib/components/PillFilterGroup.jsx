@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { recordBrowseEvent } from "../utils/personalization";
 import { useLanguage } from "../language/LanguageContext";
-import { ChevronDownIcon } from "./icons";
 
 function inferDisplayMode(filterId, field) {
   const key = `${filterId || ""} ${field || ""}`.toLowerCase();
@@ -18,27 +16,11 @@ export function PillFilterGroup({
   selected,
   onToggle,
   displayMode,
-  defaultOpen = true,
-  collapsible = true,
+  variant,
 }) {
   const lang = useLanguage();
   const count = selected.length;
-  const mode = displayMode || inferDisplayMode(filterId, field);
-  const [open, setOpen] = useState(defaultOpen);
-
-  const header = (
-    <>
-      <h3 className="ppros_ecom_filter-pill-group-label">{label}</h3>
-      <div className="ppros_ecom_filter-flex ppros_ecom_filter-items-center ppros_ecom_filter-gap-2">
-        {count > 0 && (
-          <span className="ppros_ecom_filter-pill-group-badge">
-            {count}
-          </span>
-        )}
-        {collapsible && <ChevronDownIcon open={open} />}
-      </div>
-    </>
-  );
+  const mode = displayMode || variant || inferDisplayMode(filterId, field);
 
   const renderCheckboxOptions = () => (
     <ul className="ppros_ecom_filter-checkbox-list" role="group" aria-label={label}>
@@ -114,28 +96,15 @@ export function PillFilterGroup({
       renderPillOptions()
     );
 
-  if (!collapsible) {
-    return (
-      <div className="ppros_ecom_filter-filter-section">
-        <div className="ppros_ecom_filter-filter-section-header ppros_ecom_filter-cursor-default">
-          {header}
-        </div>
-        <div className="ppros_ecom_filter-filter-section-body">{body}</div>
-      </div>
-    );
-  }
-
   return (
     <div className="ppros_ecom_filter-filter-section">
-      <button
-        type="button"
-        className="ppros_ecom_filter-filter-section-header"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-      >
-        {header}
-      </button>
-      {open && <div className="ppros_ecom_filter-filter-section-body">{body}</div>}
+      <div className="ppros_ecom_filter-filter-section-header ppros_ecom_filter-cursor-default">
+        <h3 className="ppros_ecom_filter-pill-group-label">{label}</h3>
+        {count > 0 && (
+          <span className="ppros_ecom_filter-pill-group-badge">{count}</span>
+        )}
+      </div>
+      <div className="ppros_ecom_filter-filter-section-body">{body}</div>
     </div>
   );
 }

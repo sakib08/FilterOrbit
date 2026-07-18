@@ -143,7 +143,7 @@
 /* ─── Section label (uppercase tracked headers) ─────────────────────────── */
 .ppros_ecom_filter-section-title {
   font-family: var(--font-display, system-ui, sans-serif);
-  font-size: var(--fo-label-size, 0.7rem);
+  font-size: var(--fo-label-size, 0.7rem) !important;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -153,7 +153,7 @@
 
 .ppros_ecom_filter-section-label {
   font-family: var(--font-display, system-ui, sans-serif);
-  font-size: var(--fo-label-size, 0.7rem);
+  font-size: var(--fo-label-size, 0.7rem) !important;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -340,7 +340,7 @@
 }
 
 .ppros_ecom_filter-product-name {
-  font-size: 0.875rem;
+  font-size: var(--fo-title-size, 0.875rem) !important;
   font-weight: 600;
   color: #1e293b;
   margin: 0;
@@ -373,13 +373,13 @@
 }
 
 .ppros_ecom_filter-product-price {
-  font-size: 0.875rem;
+  font-size: var(--fo-price-size, 1rem) !important;
   font-weight: 700;
   color: #1e293b;
 }
 
 .ppros_ecom_filter-product-price-original {
-  font-size: 0.75rem;
+  font-size: calc(var(--fo-price-size, 1rem) * 0.875) !important;
   font-weight: 400;
   color: #94a3b8;
   text-decoration: line-through;
@@ -406,7 +406,7 @@
 
 .ppros_ecom_filter-pill-group-label {
   font-family: var(--font-display, system-ui, sans-serif);
-  font-size: var(--fo-label-size, 0.7rem);
+  font-size: var(--fo-label-size, 0.7rem) !important;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -449,7 +449,7 @@
   border-radius: 9999px;
   border: 1.5px solid #e5e7eb;
   padding: 0.4375rem 1rem;
-  font-size: var(--fo-option-size, 0.875rem);
+  font-size: var(--fo-option-size, 0.875rem) !important;
   font-weight: 500;
   line-height: 1.4;
   cursor: pointer;
@@ -475,7 +475,7 @@
 .ppros_ecom_filter-pill-size {
   border-radius: 0.5rem;
   padding: 0.375rem 0.75rem;
-  font-size: var(--fo-option-size, 0.75rem);
+  font-size: 0.75rem !important;
   min-width: 2.5rem;
   text-align: center;
 }
@@ -512,7 +512,7 @@
   align-items: center;
   gap: 0.625rem;
   cursor: pointer;
-  font-size: var(--fo-option-size, 0.875rem);
+  font-size: var(--fo-option-size, 0.875rem) !important;
   color: #334155;
 }
 
@@ -749,12 +749,14 @@
 
 /* ─── Typography size tokens (set from Settings layout) ─────────────────── */
 .ppros_ecom_filter-filters-heading {
-  font-size: var(--fo-label-size, 0.7rem);
+  font-family: var(--font-display, system-ui, sans-serif);
+  font-size: 0.875rem !important;
+  font-weight: 600;
 }
 
 .ppros_ecom_filter-toggle-row,
 .ppros_ecom_filter-checkbox-label,
 .ppros_ecom_filter-toggle-row .ppros_ecom_filter-checkbox-label {
-  font-size: var(--fo-option-size, 0.875rem);
+  font-size: var(--fo-option-size, 0.875rem) !important;
 }
 

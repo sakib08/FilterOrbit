@@ -111,6 +111,8 @@ export default function Settings() {
   const selectedFont = settings.google_font ?? "DM Sans";
   const labelFontSize = Number(settings.label_font_size ?? 11);
   const optionFontSize = Number(settings.option_font_size ?? 14);
+  const titleFontSize = Number(settings.product_title_font_size ?? 14);
+  const priceFontSize = Number(settings.product_price_font_size ?? 16);
   const previewStack = selectedFont
     ? `"${selectedFont}", system-ui, sans-serif`
     : "system-ui, -apple-system, sans-serif";
@@ -198,8 +200,8 @@ export default function Settings() {
           </h3>
           <div className="fo-space-y-4">
             <Field
-              label="Google Font"
-              description="Applied to the entire [filter_orbit] shortcode and shop filter UI."
+              label="Body / UI font"
+              description="DM Sans by default for body, options, product cards, and inputs. Headings stay on Outfit (display)."
             >
               <select
                 value={selectedFont}
@@ -217,7 +219,7 @@ export default function Settings() {
 
             <Field
               label="Label font size"
-              description="Filter section titles and labels (Category, Price Range, etc.)."
+              description="Section headers — design default 11px (0.7rem), Outfit, uppercase."
             >
               <select
                 value={labelFontSize}
@@ -232,11 +234,41 @@ export default function Settings() {
 
             <Field
               label="Option font size"
-              description="Pills, listed checkboxes, size buttons, and toggle switch labels."
+              description="Checkbox / toggle / pill labels — design default 14px (text-sm). Size pills stay 12px."
             >
               <select
                 value={optionFontSize}
                 onChange={(e) => update("option_font_size", Number(e.target.value))}
+                className={inputClass}
+              >
+                {Object.entries(fontSizeOptions).map(([value, label]) => (
+                  <option key={value} value={Number(value)}>{label}</option>
+                ))}
+              </select>
+            </Field>
+
+            <Field
+              label="Product title font size"
+              description="Product card titles — design default 14px (text-sm)."
+            >
+              <select
+                value={titleFontSize}
+                onChange={(e) => update("product_title_font_size", Number(e.target.value))}
+                className={inputClass}
+              >
+                {Object.entries(fontSizeOptions).map(([value, label]) => (
+                  <option key={value} value={Number(value)}>{label}</option>
+                ))}
+              </select>
+            </Field>
+
+            <Field
+              label="Product price font size"
+              description="Product card prices — design default 16px (text-base). Original price scales to ~14px."
+            >
+              <select
+                value={priceFontSize}
+                onChange={(e) => update("product_price_font_size", Number(e.target.value))}
                 className={inputClass}
               >
                 {Object.entries(fontSizeOptions).map(([value, label]) => (
@@ -279,6 +311,20 @@ export default function Settings() {
                 <input type="checkbox" defaultChecked readOnly />
                 Listed checkbox
               </label>
+              <div className="fo-mt-4 fo-border-t fo-border-slate-200 fo-pt-3">
+                <p
+                  className="fo-font-semibold fo-text-slate-800"
+                  style={{ fontSize: `${titleFontSize}px` }}
+                >
+                  Product title
+                </p>
+                <p
+                  className="fo-mt-1 fo-font-bold fo-text-slate-800"
+                  style={{ fontSize: `${priceFontSize}px` }}
+                >
+                  $49.00
+                </p>
+              </div>
             </div>
           </div>
 

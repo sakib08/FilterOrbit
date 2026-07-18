@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useZeroRequestFilter } from "../hooks/useZeroRequestFilter";
 import { buildHistogram, getRangeBounds, getFilterOptions } from "../utils/filterEngine";
 import { SearchWithAI } from "./SearchWithAI";
@@ -17,50 +17,6 @@ import {
 import { LanguageProvider } from "../language/LanguageContext";
 import { useLanguage } from "../language/LanguageContext";
 import { SlidersIcon } from "./icons";
-
-function ChevronIcon() {
-  return (
-    <svg
-      className="ppros_ecom_filter-collapsible-chevron"
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M6 9l6 6 6-6" />
-    </svg>
-  );
-}
-
-function RangeFilterCollapsible({ label, children, defaultOpen = true }) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div
-      className={[
-        "ppros_ecom_filter-collapsible",
-        open ? "ppros_ecom_filter-collapsible-open" : "",
-      ].join(" ")}
-    >
-      <button
-        type="button"
-        className="ppros_ecom_filter-collapsible-trigger"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-      >
-        <span className="ppros_ecom_filter-section-title">{label}</span>
-        <ChevronIcon />
-      </button>
-      {open && (
-        <div className="ppros_ecom_filter-collapsible-body">{children}</div>
-      )}
-    </div>
-  );
-}
 
 function getColumnItems(filters, blocks, colIndex) {
   const items = [
@@ -191,37 +147,32 @@ export function FilterOrbitLayout({
             : (n) => `${n}`;
 
       return (
-        <RangeFilterCollapsible key={def.id} label={def.label}>
-          <RangeSliderHistogram
-            key={`${def.id}-${filterResetKey}`}
-            label={def.label}
-            unit={def.unit}
-            min={min}
-            max={max}
-            value={[Number(range[0]), Number(range[1])]}
-            histogram={histograms[def.id] ?? []}
-            step={def.step ?? 1}
-            barColor={ui.barColor}
-            formatValue={formatValue}
-            onChange={(lo, hi) => setRangeFilter(def.id, lo, hi)}
-          />
-        </RangeFilterCollapsible>
+        <RangeSliderHistogram
+          key={`${def.id}-${filterResetKey}`}
+          label={def.label}
+          unit={def.unit}
+          min={min}
+          max={max}
+          value={[Number(range[0]), Number(range[1])]}
+          histogram={histograms[def.id] ?? []}
+          step={def.step ?? 1}
+          barColor={ui.barColor}
+          formatValue={formatValue}
+          onChange={(lo, hi) => setRangeFilter(def.id, lo, hi)}
+        />
       );
     }
 
     if (def.type === "visual" && def.visualOptions) {
       return (
-        <div key={def.id} className="ppros_ecom_filter-collapsible ppros_ecom_filter-collapsible-open">
-          <div className="ppros_ecom_filter-collapsible-body ppros_ecom_filter-pt-0">
-            <VisualDiscoveryFilter
-              label={def.label}
-              options={def.visualOptions}
-              selected={filterState[def.id] ?? []}
-              onToggle={(id) => toggleFilter(def.id, id)}
-              accentColor={ui.accentColor}
-            />
-          </div>
-        </div>
+        <VisualDiscoveryFilter
+          key={def.id}
+          label={def.label}
+          options={def.visualOptions}
+          selected={filterState[def.id] ?? []}
+          onToggle={(id) => toggleFilter(def.id, id)}
+          accentColor={ui.accentColor}
+        />
       );
     }
 
@@ -238,8 +189,6 @@ export function FilterOrbitLayout({
           selected={filterState[def.id] ?? []}
           onToggle={(v) => toggleFilter(def.id, v)}
           variant={displayMode}
-          collapsible
-          defaultOpen={idx < 4}
         />
       );
     }
@@ -256,8 +205,6 @@ export function FilterOrbitLayout({
         buttonColor={ui.buttonColor}
         accentColor={ui.accentColor}
         variant={displayMode === "size" ? "size" : "pill"}
-        collapsible
-        defaultOpen={idx < 4}
       />
     );
   };
@@ -348,21 +295,14 @@ export function FilterOrbitLayout({
           gridTemplateColumns: gridTemplateColumns(columns),
           gap: "1.5rem",
           alignItems: "start",
-          fontFamily: settings?.google_font
-            ? `"${settings.google_font}", system-ui, sans-serif`
-            : undefined,
-          ["--font-sans"]: settings?.google_font
-            ? `"${settings.google_font}", system-ui, sans-serif`
-            : undefined,
-          ["--font-display"]: settings?.google_font
-            ? `"${settings.google_font}", system-ui, sans-serif`
-            : undefined,
-          ["--fo-label-size"]: settings?.label_font_size
-            ? `${Number(settings.label_font_size)}px`
-            : undefined,
-          ["--fo-option-size"]: settings?.option_font_size
-            ? `${Number(settings.option_font_size)}px`
-            : undefined,
+          fontFamily: `"${settings?.google_font || "DM Sans"}", system-ui, sans-serif`,
+          ["--font-sans"]: `"${settings?.google_font || "DM Sans"}", system-ui, sans-serif`,
+          ["--font-display"]: '"Outfit", system-ui, sans-serif',
+          ["--font-size"]: "16px",
+          ["--fo-label-size"]: `${Number(settings?.label_font_size ?? 11)}px`,
+          ["--fo-option-size"]: `${Number(settings?.option_font_size ?? 14)}px`,
+          ["--fo-title-size"]: `${Number(settings?.product_title_font_size ?? 14)}px`,
+          ["--fo-price-size"]: `${Number(settings?.product_price_font_size ?? 16)}px`,
         }}
       >
         {columns.map((col, colIndex) => {

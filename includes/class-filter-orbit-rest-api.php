@@ -213,6 +213,10 @@ class Filter_Orbit_REST_API {
 				$sanitized[ $key ] = Filter_Orbit_Activator::sanitize_font_size( $value, 11 );
 			} elseif ( 'option_font_size' === $key ) {
 				$sanitized[ $key ] = Filter_Orbit_Activator::sanitize_font_size( $value, 14 );
+			} elseif ( 'product_title_font_size' === $key ) {
+				$sanitized[ $key ] = Filter_Orbit_Activator::sanitize_font_size( $value, 14 );
+			} elseif ( 'product_price_font_size' === $key ) {
+				$sanitized[ $key ] = Filter_Orbit_Activator::sanitize_font_size( $value, 16 );
 			} elseif ( is_int( $default ) ) {
 				$sanitized[ $key ] = absint( $value );
 			} else {

@@ -1,6 +1,4 @@
-import { useState } from "react";
 import { useLanguage } from "../language/LanguageContext";
-import { ChevronDownIcon } from "./icons";
 
 export function VisualDiscoveryFilter({
   label,
@@ -11,32 +9,22 @@ export function VisualDiscoveryFilter({
 }) {
   const lang = useLanguage();
   const count = selected.length;
-  const [open, setOpen] = useState(true);
   const activeRingStyle = {
     boxShadow: `0 0 0 2px #fff, 0 0 0 3px ${accentColor}`,
   };
 
   return (
     <div className="ppros_ecom_filter-filter-section">
-      <button
-        type="button"
-        className="ppros_ecom_filter-filter-section-header"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-      >
+      <div className="ppros_ecom_filter-filter-section-header ppros_ecom_filter-cursor-default">
         <h3 className="ppros_ecom_filter-section-title">{label}</h3>
-        <div className="ppros_ecom_filter-flex ppros_ecom_filter-items-center ppros_ecom_filter-gap-2">
-          {count > 0 && (
-            <span className="ppros_ecom_filter-text-micro ppros_ecom_filter-font-bold ppros_ecom_filter-text-slate-400">
-              {count} {lang.selected_label}
-            </span>
-          )}
-          <ChevronDownIcon open={open} />
-        </div>
-      </button>
+        {count > 0 && (
+          <span className="ppros_ecom_filter-text-micro ppros_ecom_filter-font-bold ppros_ecom_filter-text-slate-400">
+            {count} {lang.selected_label}
+          </span>
+        )}
+      </div>
 
-      {open && (
-        <div className="ppros_ecom_filter-filter-section-body">
+      <div className="ppros_ecom_filter-filter-section-body">
           <div
             className="ppros_ecom_filter-flex ppros_ecom_filter-flex-wrap ppros_ecom_filter-gap-3"
             role="group"
@@ -96,7 +84,6 @@ export function VisualDiscoveryFilter({
             })}
           </div>
         </div>
-      )}
     </div>
   );
 }

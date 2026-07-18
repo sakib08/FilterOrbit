@@ -101,6 +101,8 @@ class Filter_Orbit_Activator {
 			'google_font'             => 'DM Sans',
 			'label_font_size'         => 11,
 			'option_font_size'        => 14,
+			'product_title_font_size' => 14,
+			'product_price_font_size' => 16,
 			'page_layout'             => self::default_page_layout(),
 		);
 	}
@@ -289,20 +291,50 @@ class Filter_Orbit_Activator {
 	}
 
 	/**
-	 * Build Google Fonts CSS2 URL for a family (empty = none).
+	 * Default display / headings font (Outfit).
 	 *
-	 * @param string $family Font family.
+	 * @return string
+	 */
+	public static function default_display_font() {
+		return 'Outfit';
+	}
+
+	/**
+	 * Default body / UI font (DM Sans).
+	 *
+	 * @return string
+	 */
+	public static function default_body_font() {
+		return 'DM Sans';
+	}
+
+	/**
+	 * Build Google Fonts CSS2 URL for body + display pair.
+	 *
+	 * @param string $family Body / UI font family (DM Sans by default).
 	 * @return string
 	 */
 	public static function google_font_css_url( $family ) {
-		$family = self::sanitize_google_font( $family );
+		$body    = self::sanitize_google_font( $family );
+		$display = self::default_display_font();
+		$families = array();
 
-		if ( '' === $family ) {
+		if ( '' !== $body ) {
+			$families[] = $body;
+		}
+		$families[] = $display;
+		$families   = array_values( array_unique( $families ) );
+
+		if ( empty( $families ) ) {
 			return '';
 		}
 
-		$encoded = str_replace( ' ', '+', $family );
-		return 'https://fonts.googleapis.com/css2?family=' . $encoded . ':wght@400;500;600;700&display=swap';
+		$parts = array();
+		foreach ( $families as $name ) {
+			$parts[] = 'family=' . str_replace( ' ', '+', $name ) . ':wght@400;500;600;700';
+		}
+
+		return 'https://fonts.googleapis.com/css2?' . implode( '&', $parts ) . '&display=swap';
 	}
 
 	/**

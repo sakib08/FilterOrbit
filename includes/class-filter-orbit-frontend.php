@@ -96,12 +96,15 @@ class Filter_Orbit_Frontend {
 			);
 		}
 
-		$settings    = Filter_Orbit::get_settings();
-		$font_family = isset( $settings['google_font'] ) ? $settings['google_font'] : 'DM Sans';
-		$font_url    = Filter_Orbit_Activator::google_font_css_url( $font_family );
-		$font_stack  = Filter_Orbit_Activator::google_font_stack( $font_family );
-		$label_size  = Filter_Orbit_Activator::sanitize_font_size( $settings['label_font_size'] ?? 11, 11 );
-		$option_size = Filter_Orbit_Activator::sanitize_font_size( $settings['option_font_size'] ?? 14, 14 );
+		$settings      = Filter_Orbit::get_settings();
+		$font_family   = isset( $settings['google_font'] ) ? $settings['google_font'] : Filter_Orbit_Activator::default_body_font();
+		$font_url      = Filter_Orbit_Activator::google_font_css_url( $font_family );
+		$sans_stack    = Filter_Orbit_Activator::google_font_stack( $font_family );
+		$display_stack = Filter_Orbit_Activator::google_font_stack( Filter_Orbit_Activator::default_display_font() );
+		$label_size    = Filter_Orbit_Activator::sanitize_font_size( $settings['label_font_size'] ?? 11, 11 );
+		$option_size   = Filter_Orbit_Activator::sanitize_font_size( $settings['option_font_size'] ?? 14, 14 );
+		$title_size    = Filter_Orbit_Activator::sanitize_font_size( $settings['product_title_font_size'] ?? 14, 14 );
+		$price_size    = Filter_Orbit_Activator::sanitize_font_size( $settings['product_price_font_size'] ?? 16, 16 );
 
 		if ( $font_url ) {
 			wp_enqueue_style(
@@ -115,31 +118,60 @@ class Filter_Orbit_Frontend {
 		$font_css = sprintf(
 			'.filter-orbit-root[data-filter-orbit],'
 			. '.filter-orbit-root[data-filter-orbit] .filter-orbit-root,'
-			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-root{'
-			. '--font-sans:%1$s !important;'
-			. '--font-display:%1$s !important;'
-			. '--fo-label-size:%2$spx !important;'
-			. '--fo-option-size:%3$spx !important;'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-root,'
+			. '.filter-orbit-root[data-filter-orbit] .filter-orbit-font-scope{'
+			. '--font-sans:%1$s;'
+			. '--font-display:%2$s;'
+			. '--font-size:16px;'
+			. '--fo-label-size:%3$spx;'
+			. '--fo-option-size:%4$spx;'
+			. '--fo-title-size:%5$spx;'
+			. '--fo-price-size:%6$spx;'
 			. 'font-family:%1$s !important;'
 			. '}'
-			. '.filter-orbit-root[data-filter-orbit] *,'
-			. '.filter-orbit-root[data-filter-orbit] button,'
-			. '.filter-orbit-root[data-filter-orbit] input,'
-			. '.filter-orbit-root[data-filter-orbit] select,'
-			. '.filter-orbit-root[data-filter-orbit] textarea,'
-			. '.filter-orbit-root[data-filter-orbit] label,'
-			. '.filter-orbit-root[data-filter-orbit] h1,'
-			. '.filter-orbit-root[data-filter-orbit] h2,'
-			. '.filter-orbit-root[data-filter-orbit] h3,'
-			. '.filter-orbit-root[data-filter-orbit] h4,'
-			. '.filter-orbit-root[data-filter-orbit] p,'
-			. '.filter-orbit-root[data-filter-orbit] span,'
-			. '.filter-orbit-root[data-filter-orbit] a{'
-			. 'font-family:inherit !important;'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-section-title,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-section-label,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-pill-group-label{'
+			. 'font-family:%2$s !important;'
+			. 'font-size:%3$spx !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-filters-heading,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-filters-heading span{'
+			. 'font-family:%2$s !important;'
+			. 'font-size:2.5rem !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-pill,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-checkbox-row,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-checkbox-row-label,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-checkbox-label,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-toggle-row,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-toggle-row .ppros_ecom_filter-checkbox-label{'
+			. 'font-family:%1$s !important;'
+			. 'font-size:%4$spx !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-pill-size{'
+			. 'font-family:%1$s !important;'
+			. 'font-size:0.75rem !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-product-name,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-product-title{'
+			. 'font-family:%1$s !important;'
+			. 'font-size:%5$spx !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-product-price{'
+			. 'font-family:%1$s !important;'
+			. 'font-size:%6$spx !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-product-price-original{'
+			. 'font-family:%1$s !important;'
+			. 'font-size:calc(%6$spx * 0.875) !important;'
 			. '}',
-			$font_stack,
+			$sans_stack,
+			$display_stack,
 			$label_size,
-			$option_size
+			$option_size,
+			$title_size,
+			$price_size
 		);
 
 		wp_register_style( 'filter-orbit-font-vars', false, array(), null );
@@ -212,17 +244,23 @@ class Filter_Orbit_Frontend {
 	 * @return string
 	 */
 	private function get_mount_markup() {
-		$settings    = Filter_Orbit::get_settings();
-		$font_family = isset( $settings['google_font'] ) ? $settings['google_font'] : 'DM Sans';
-		$font_stack  = Filter_Orbit_Activator::google_font_stack( $font_family );
-		$label_size  = Filter_Orbit_Activator::sanitize_font_size( $settings['label_font_size'] ?? 11, 11 );
-		$option_size = Filter_Orbit_Activator::sanitize_font_size( $settings['option_font_size'] ?? 14, 14 );
+		$settings      = Filter_Orbit::get_settings();
+		$font_family   = isset( $settings['google_font'] ) ? $settings['google_font'] : Filter_Orbit_Activator::default_body_font();
+		$sans_stack    = Filter_Orbit_Activator::google_font_stack( $font_family );
+		$display_stack = Filter_Orbit_Activator::google_font_stack( Filter_Orbit_Activator::default_display_font() );
+		$label_size    = Filter_Orbit_Activator::sanitize_font_size( $settings['label_font_size'] ?? 11, 11 );
+		$option_size   = Filter_Orbit_Activator::sanitize_font_size( $settings['option_font_size'] ?? 14, 14 );
+		$title_size    = Filter_Orbit_Activator::sanitize_font_size( $settings['product_title_font_size'] ?? 14, 14 );
+		$price_size    = Filter_Orbit_Activator::sanitize_font_size( $settings['product_price_font_size'] ?? 16, 16 );
 
 		$style = sprintf(
-			'--font-sans:%1$s;--font-display:%1$s;font-family:%1$s;--fo-label-size:%2$spx;--fo-option-size:%3$spx;',
-			$font_stack,
+			'--font-sans:%1$s;--font-display:%2$s;--font-size:16px;font-family:%1$s;--fo-label-size:%3$spx;--fo-option-size:%4$spx;--fo-title-size:%5$spx;--fo-price-size:%6$spx;',
+			$sans_stack,
+			$display_stack,
 			$label_size,
-			$option_size
+			$option_size,
+			$title_size,
+			$price_size
 		);
 
 		return sprintf(

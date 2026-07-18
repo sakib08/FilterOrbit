@@ -53,6 +53,7 @@ const emptyFilter = (source) => {
 export default function FilterDesigner() {
   const [filters, setFilters] = useState([]);
   const [pageLayout, setPageLayout] = useState(defaultPageLayout());
+  const [pluginSettings, setPluginSettings] = useState({});
   const [products, setProducts] = useState([]);
   const [sources, setSources] = useState([]);
   const [wooActive, setWooActive] = useState(false);
@@ -88,6 +89,7 @@ export default function FilterDesigner() {
         setWooActive(!!sourceData?.woocommerce_active);
         setSources(sourceData?.sources ?? []);
         setPageLayout(settingsData?.page_layout ?? defaultPageLayout());
+        setPluginSettings(settingsData && typeof settingsData === "object" ? settingsData : {});
         setLanguageStrings(languageData ?? {});
         setSelectedId(normalized[0] ? `filter:${normalized[0].id}` : null);
       })
@@ -508,6 +510,7 @@ export default function FilterDesigner() {
         filters={filters}
         products={products}
         language={languageStrings ?? {}}
+        settings={pluginSettings}
       />
 
       <AdminToast message={toast?.message} type={toast?.type} />

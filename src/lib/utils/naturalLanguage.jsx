@@ -1,6 +1,4 @@
-import type { FilterState, Product } from "../types";
-
-const RULES: { pattern: RegExp; apply: (m: RegExpMatchArray) => Partial<FilterState> }[] = [
+const RULES = [
   {
     pattern: /under\s*\$?(\d+)/i,
     apply: (m) => ({ price: [0, Number(m[1])] }),
@@ -17,31 +15,28 @@ const RULES: { pattern: RegExp; apply: (m: RegExpMatchArray) => Partial<FilterSt
   },
   {
     pattern: /brand\s+(?:is\s+)?["']?(\w+)["']?/i,
-    apply: (m) => ({ brand: [m[1]!] }),
+    apply: (m) => ({ brand: [m[1]] }),
   },
   {
     pattern: /(cordless|electric|gas|battery)/i,
-    apply: (m) => ({ powerSource: [m[1]!.toLowerCase()] }),
+    apply: (m) => ({ powerSource: [m[1].toLowerCase()] }),
   },
   {
     pattern: /(wooden|metal|modern|industrial)/i,
-    apply: (m) => ({ style: [m[1]!.toLowerCase()] }),
+    apply: (m) => ({ style: [m[1].toLowerCase()] }),
   },
   {
     pattern: /(blue|red|black|white|green|wood)/i,
-    apply: (m) => ({ color: [m[1]!.toLowerCase()] }),
+    apply: (m) => ({ color: [m[1].toLowerCase()] }),
   },
   {
     pattern: /(power tools?|gardening|watches?|furniture)/i,
-    apply: (m) => ({ category: [m[1]!.toLowerCase().replace(/\s/g, " ").trim()] }),
+    apply: (m) => ({ category: [m[1].toLowerCase().replace(/\s/g, " ").trim()] }),
   },
 ];
 
-export function parseNaturalLanguageLocally(
-  query: string,
-  products: Product[]
-): FilterState {
-  const state: FilterState = {};
+export function parseNaturalLanguageLocally(query, products) {
+  const state = {};
   const q = query.trim();
   if (!q) return state;
 

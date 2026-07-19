@@ -1,9 +1,4 @@
-import type { FilterDefinition, FilterState, Product } from "../types";
-
-export function resolveProductField(
-  product: Product,
-  field: string
-): unknown {
+export function resolveProductField(product, field) {
   const direct = product[field];
   if (direct !== undefined && direct !== null) {
     return direct;
@@ -25,7 +20,7 @@ export function resolveProductField(
   return undefined;
 }
 
-function productFieldValues(product: Product, field: string): string[] {
+function productFieldValues(product, field) {
   const raw = resolveProductField(product, field);
   if (raw === undefined || raw === null) {
     return [];
@@ -35,11 +30,7 @@ function productFieldValues(product: Product, field: string): string[] {
   return values.map((value) => String(value).toLowerCase());
 }
 
-function matchesField(
-  product: Product,
-  field: string,
-  values: (string | number | boolean)[]
-): boolean {
+function matchesField(product, field, values) {
   if (values.length === 0) return true;
 
   const productValues = productFieldValues(product, field);
@@ -50,11 +41,7 @@ function matchesField(
   );
 }
 
-function matchesRange(
-  product: Product,
-  field: string,
-  range: (string | number | boolean)[]
-): boolean {
+function matchesRange(product, field, range) {
   if (range.length < 2) return true;
   const value = Number(product[field]);
   if (Number.isNaN(value)) return false;
@@ -64,10 +51,7 @@ function matchesRange(
   return value >= min && value <= max;
 }
 
-function resolveRangeField(
-  filterId: string,
-  filterDefs?: FilterDefinition[]
-): string | null {
+function resolveRangeField(filterId, filterDefs) {
   const def = filterDefs?.find((f) => f.id === filterId);
   if (def?.type === "range") {
     return def.field;
@@ -80,12 +64,7 @@ function resolveRangeField(
   return null;
 }
 
-function isDefaultRange(
-  values: (string | number | boolean)[],
-  filterId: string,
-  filterDefs: FilterDefinition[] | undefined,
-  products: Product[] | undefined | null
-): boolean {
+function isDefaultRange(values, filterId, filterDefs, products) {
   if (values.length < 2) return true;
   const def = filterDefs?.find((f) => f.id === filterId);
   if (!def || def.type !== "range") return false;
@@ -95,7 +74,7 @@ function isDefaultRange(
   );
 }
 
-function matchesSearch(product: Product, query: string): boolean {
+function matchesSearch(product, query) {
   const q = query.trim().toLowerCase();
   if (!q) return true;
   const haystack = [
@@ -114,12 +93,12 @@ function matchesSearch(product: Product, query: string): boolean {
 }
 
 export function filterProducts(
-  products: Product[] | undefined | null,
-  state: FilterState,
+  products,
+  state,
   textQuery = "",
-  semanticProductIds?: Set<string>,
-  filterDefs?: FilterDefinition[]
-): Product[] {
+  semanticProductIds,
+  filterDefs
+) {
   const catalog = Array.isArray(products) ? products : [];
   let result = catalog;
 
@@ -156,10 +135,7 @@ export function filterProducts(
   return result;
 }
 
-export function getRangeBounds(
-  def: FilterDefinition,
-  products: Product[]
-): { min: number; max: number } {
+export function getRangeBounds(def, products) {
   const min = Number(def.min ?? 0);
   const configuredMax =
     def.max != null && !Number.isNaN(Number(def.max))
@@ -185,14 +161,8 @@ export function getRangeBounds(
   };
 }
 
-export function buildHistogram(
-  products: Product[] | undefined | null,
-  field: string,
-  min: number,
-  max: number,
-  bins = 24
-): number[] {
-  const counts = new Array(bins).fill(0) as number[];
+export function buildHistogram(products, field, min, max, bins = 24) {
+  const counts = new Array(bins).fill(0);
   const span = max - min || 1;
   for (const p of (Array.isArray(products) ? products : [])) {
     const v = Number(p[field]);
@@ -207,11 +177,8 @@ export function buildHistogram(
   return counts.map((c) => c / peak);
 }
 
-export function countByOption(
-  products: Product[],
-  field: string
-): Map<string, number> {
-  const map = new Map<string, number>();
+export function countByOption(products, field) {
+  const map = new Map();
   for (const p of products) {
     const raw = resolveProductField(p, field);
     if (raw == null) continue;
@@ -219,17 +186,14 @@ export function countByOption(
     const values = Array.isArray(raw) ? raw : [raw];
     for (const value of values) {
       const key = String(value).trim();
-      if (key === "") continue;        // skip blank/empty entries
+      if (key === "") continue;
       map.set(key, (map.get(key) ?? 0) + 1);
     }
   }
   return map;
 }
 
-export function getFilterOptions(
-  def: FilterDefinition,
-  products: Product[]
-): { value: string; label: string; count?: number }[] {
+export function getFilterOptions(def, products) {
   const counts = countByOption(products, def.field);
 
   if (def.options?.length) {

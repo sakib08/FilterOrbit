@@ -112,7 +112,7 @@ export function SearchWithAI({
         >
           {lang.search_section_label ?? "Search"}
         </SectionLabel>
-        <div className="ppros_ecom_filter-panel">
+        <div className="ppros_ecom_filter-panel ppros_ecom_filter-shadow-card">
           <BasicSearch textQuery={textQuery} onTextChange={onTextChange} accentColor={accentColor} />
         </div>
       </section>

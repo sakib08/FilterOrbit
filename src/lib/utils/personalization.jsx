@@ -1,46 +1,9 @@
-import type { BrowseEvent, FilterDefinition, FilterState, Product } from "../types";
 import { countByOption, resolveProductField } from "./filterEngine";
 
 const SESSION_KEY = "ppros_ecom_filter_browse";
 const BROWSE_EVENT_NAME = "ppros_ecom_filter_browse";
 
-export interface PersonalizationMetric {
-  label: string;
-  value: string;
-  pct: number;
-}
-
-export interface QuickChip {
-  id: string;
-  label: string;
-  count?: number;
-  filterId?: string;
-  value?: string | number | boolean;
-  icon?: string;
-}
-
-export interface ProductPrediction {
-  id: string;
-  title: string;
-  tag: string;
-  reason: string;
-  price: number;
-  currency?: string;
-  fit: number;
-  imageUrl: string;
-}
-
-export interface PersonalizationProfile {
-  confidence: number;
-  sessionLabel: string;
-  sessionInitials: string;
-  metrics: PersonalizationMetric[];
-  quickChips: QuickChip[];
-  predictions: ProductPrediction[];
-  isLearning: boolean;
-}
-
-function readBrowseEvents(): BrowseEvent[] {
+function readBrowseEvents() {
   try {
     const raw = sessionStorage.getItem(SESSION_KEY);
     return raw ? JSON.parse(raw) : [];
@@ -49,7 +12,7 @@ function readBrowseEvents(): BrowseEvent[] {
   }
 }
 
-export function subscribeBrowseEvents(onStoreChange: () => void): () => void {
+export function subscribeBrowseEvents(onStoreChange) {
   if (typeof window === "undefined") {
     return () => undefined;
   }
@@ -59,10 +22,7 @@ export function subscribeBrowseEvents(onStoreChange: () => void): () => void {
   return () => window.removeEventListener(BROWSE_EVENT_NAME, handler);
 }
 
-export function recordBrowseEvent(
-  filterId: string,
-  value: string | number | boolean
-): void {
+export function recordBrowseEvent(filterId, value) {
   try {
     const events = readBrowseEvents();
     events.push({ filterId, value, timestamp: Date.now() });
@@ -75,11 +35,11 @@ export function recordBrowseEvent(
   }
 }
 
-export function recordProductView(productId: string): void {
+export function recordProductView(productId) {
   recordBrowseEvent("__product__", productId);
 }
 
-function weightedScore(events: BrowseEvent[]): number {
+function weightedScore(events) {
   const now = Date.now();
   let total = 0;
   for (const event of events) {
@@ -89,8 +49,8 @@ function weightedScore(events: BrowseEvent[]): number {
   return total;
 }
 
-export function getBrowseScores(): Map<string, number> {
-  const scores = new Map<string, number>();
+export function getBrowseScores() {
+  const scores = new Map();
   const now = Date.now();
 
   for (const event of readBrowseEvents()) {
@@ -102,8 +62,8 @@ export function getBrowseScores(): Map<string, number> {
   return scores;
 }
 
-export function getBrowseValueScores(): Map<string, number> {
-  const scores = new Map<string, number>();
+export function getBrowseValueScores() {
+  const scores = new Map();
   const now = Date.now();
 
   for (const event of readBrowseEvents()) {
@@ -119,11 +79,7 @@ export function getBrowseValueScores(): Map<string, number> {
   return scores;
 }
 
-function productMatchesValue(
-  product: Product,
-  field: string,
-  value: string | number | boolean
-): boolean {
+function productMatchesValue(product, field, value) {
   const raw = resolveProductField(product, field);
   if (raw === undefined || raw === null) {
     return false;
@@ -134,12 +90,7 @@ function productMatchesValue(
   return values.some((entry) => String(entry).toLowerCase() === needle);
 }
 
-function scoreProduct(
-  product: Product,
-  filters: FilterDefinition[],
-  valueScores: Map<string, number>,
-  filterState: FilterState
-): number {
+function scoreProduct(product, filters, valueScores, filterState) {
   let score = 0;
 
   for (const [key, weight] of valueScores) {
@@ -178,26 +129,20 @@ function scoreProduct(
   return score;
 }
 
-function topEntries(
-  map: Map<string, number>,
-  limit: number
-): [string, number][] {
+function topEntries(map, limit) {
   return [...map.entries()].sort((a, b) => b[1] - a[1]).slice(0, limit);
 }
 
-function findFilter(
-  filters: FilterDefinition[],
-  matcher: (filter: FilterDefinition) => boolean
-): FilterDefinition | undefined {
+function findFilter(filters, matcher) {
   return filters.find(matcher);
 }
 
-function formatPriceRange(min: number, max: number, currency?: string): string {
+function formatPriceRange(min, max, currency) {
   const prefix = currency ? `${currency} ` : "$";
   return `${prefix}${Math.round(min)} – ${prefix}${Math.round(max)}`;
 }
 
-function initialsFromLabel(label: string): string {
+function initialsFromLabel(label) {
   const parts = label.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) {
     return "YO";
@@ -208,12 +153,8 @@ function initialsFromLabel(label: string): string {
   return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
 }
 
-function buildMetrics(
-  products: Product[],
-  filters: FilterDefinition[],
-  valueScores: Map<string, number>
-): PersonalizationMetric[] {
-  const metrics: PersonalizationMetric[] = [];
+function buildMetrics(products, filters, valueScores) {
+  const metrics = [];
   const browsed = topEntries(valueScores, 6);
 
   const categoryFilter = findFilter(filters, (f) => f.field === "category");
@@ -263,7 +204,7 @@ function buildMetrics(
     const brandCounts = countByOption(products, brandFilter.field);
     const browsedBrands = browsed
       .filter(([key]) => key.startsWith(`${brandFilter.id}::`))
-      .map(([key, weight]) => [key.split("::")[1] ?? "", weight] as const);
+      .map(([key, weight]) => [key.split("::")[1] ?? "", weight]);
 
     const brandNames =
       browsedBrands.length > 0
@@ -311,13 +252,9 @@ function buildMetrics(
   return metrics.slice(0, 4);
 }
 
-function buildQuickChips(
-  products: Product[],
-  filters: FilterDefinition[],
-  valueScores: Map<string, number>
-): QuickChip[] {
-  const chips: QuickChip[] = [];
-  const used = new Set<string>();
+function buildQuickChips(products, filters, valueScores) {
+  const chips = [];
+  const used = new Set();
 
   const topBrowse = topEntries(valueScores, 1)[0];
   if (topBrowse) {
@@ -381,11 +318,7 @@ function buildQuickChips(
   return chips;
 }
 
-function predictionReason(
-  product: Product,
-  filters: FilterDefinition[],
-  valueScores: Map<string, number>
-): { tag: string; reason: string } {
+function predictionReason(product, filters, valueScores) {
   for (const [key, weight] of topEntries(valueScores, 3)) {
     const sep = key.indexOf("::");
     if (sep === -1) {
@@ -423,12 +356,7 @@ function predictionReason(
   };
 }
 
-function buildPredictions(
-  products: Product[],
-  filters: FilterDefinition[],
-  valueScores: Map<string, number>,
-  filterState: FilterState
-): ProductPrediction[] {
+function buildPredictions(products, filters, valueScores, filterState) {
   const scored = products
     .map((product) => ({
       product,
@@ -467,10 +395,10 @@ function buildPredictions(
 }
 
 export function buildPersonalizationProfile(
-  products: Product[],
-  filters: FilterDefinition[],
-  filterState: FilterState = {}
-): PersonalizationProfile {
+  products,
+  filters,
+  filterState = {}
+) {
   const events = readBrowseEvents().filter(
     (event) => event.filterId !== "__product__"
   );
@@ -502,10 +430,7 @@ export function buildPersonalizationProfile(
   };
 }
 
-export function personalizeFilterOrder(
-  filters: FilterDefinition[] | undefined | null,
-  hideIrrelevant: boolean
-): FilterDefinition[] {
+export function personalizeFilterOrder(filters, hideIrrelevant) {
   if (!Array.isArray(filters)) return [];
   const scores = getBrowseScores();
   const touched = new Set([...scores.keys()]);
@@ -529,7 +454,7 @@ export function personalizeFilterOrder(
   });
 }
 
-export function getRecommendedFilterIds(): string[] {
+export function getRecommendedFilterIds() {
   const scores = getBrowseScores();
   return [...scores.entries()]
     .filter(([id, score]) => id !== "__product__" && score >= 0.5)

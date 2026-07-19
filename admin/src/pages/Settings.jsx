@@ -1,13 +1,57 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { api, adminConfig } from "../api";
 import { Field, Toggle, inputClass } from "../components/FormFields";
 import AdminToast from "../components/AdminToast";
+
+const FALLBACK_GOOGLE_FONTS = {
+  "": "Theme / System default",
+  "DM Sans": "DM Sans",
+  Outfit: "Outfit",
+  Inter: "Inter",
+  Roboto: "Roboto",
+  "Open Sans": "Open Sans",
+  Lato: "Lato",
+  Montserrat: "Montserrat",
+  Poppins: "Poppins",
+  Nunito: "Nunito",
+  "Plus Jakarta Sans": "Plus Jakarta Sans",
+};
+
+const FALLBACK_FONT_SIZES = {
+  10: "10px",
+  11: "11px",
+  12: "12px",
+  13: "13px",
+  14: "14px",
+  15: "15px",
+  16: "16px",
+  18: "18px",
+  20: "20px",
+  22: "22px",
+  24: "24px",
+};
 
 export default function Settings() {
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null);
+
+  const googleFonts = useMemo(() => {
+    const fonts = adminConfig.googleFonts;
+    if (fonts && typeof fonts === "object") {
+      return fonts;
+    }
+    return FALLBACK_GOOGLE_FONTS;
+  }, []);
+
+  const fontSizeOptions = useMemo(() => {
+    const sizes = adminConfig.fontSizeOptions;
+    if (sizes && typeof sizes === "object") {
+      return sizes;
+    }
+    return FALLBACK_FONT_SIZES;
+  }, []);
 
   const showToast = useCallback((message, type = "success") => {
     setToast({ message, type });
@@ -20,6 +64,23 @@ export default function Settings() {
       .catch((err) => showToast(err.message, "error"))
       .finally(() => setLoading(false));
   }, [showToast]);
+
+  useEffect(() => {
+    const family = settings?.google_font;
+    if (!family) return undefined;
+
+    const id = "filter-orbit-settings-google-font";
+    let link = document.getElementById(id);
+    if (!link) {
+      link = document.createElement("link");
+      link.id = id;
+      link.rel = "stylesheet";
+      document.head.appendChild(link);
+    }
+    const encoded = String(family).replace(/ /g, "+");
+    link.href = `https://fonts.googleapis.com/css2?family=${encoded}:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap`;
+    return undefined;
+  }, [settings?.google_font]);
 
   const update = useCallback((key, value) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
@@ -46,6 +107,15 @@ export default function Settings() {
       </div>
     );
   }
+
+  const selectedFont = settings.google_font ?? "DM Sans";
+  const labelFontSize = Number(settings.label_font_size ?? 11);
+  const optionFontSize = Number(settings.option_font_size ?? 14);
+  const titleFontSize = Number(settings.product_title_font_size ?? 14);
+  const priceFontSize = Number(settings.product_price_font_size ?? 16);
+  const previewStack = selectedFont
+    ? `"${selectedFont}", system-ui, sans-serif`
+    : "system-ui, -apple-system, sans-serif";
 
   return (
     <>
@@ -126,29 +196,136 @@ export default function Settings() {
 
         <section className="fo-rounded-2xl fo-border fo-border-slate-200 fo-bg-white fo-p-6 fo-shadow-sm lg:fo-col-span-1">
           <h3 className="fo-mb-4 fo-text-sm fo-font-bold fo-uppercase fo-tracking-wide fo-text-slate-400">
-            Display
+            Typography
           </h3>
-          <div className="fo-grid fo-gap-4">
-            <Field label="Products per page">
-              <input
-                type="number"
-                min={1}
-                max={100}
-                value={settings.products_per_page ?? 12}
-                onChange={(e) => update("products_per_page", Number(e.target.value))}
-                className={inputClass}
-              />
-            </Field>
-            <Field label="Sidebar position">
+          <div className="fo-space-y-4">
+            <Field
+              label="Body / UI font"
+              description="DM Sans by default for body, options, product cards, and inputs. Headings stay on Outfit (display)."
+            >
               <select
-                value={settings.sidebar_position || "left"}
-                onChange={(e) => update("sidebar_position", e.target.value)}
+                value={selectedFont}
+                onChange={(e) => update("google_font", e.target.value)}
                 className={inputClass}
+                style={{ fontFamily: previewStack }}
               >
-                <option value="left">Left</option>
-                <option value="right">Right</option>
+                {Object.entries(googleFonts).map(([value, label]) => (
+                  <option key={value || "__system"} value={value} style={{ fontFamily: value ? `"${value}", sans-serif` : "system-ui, sans-serif" }}>
+                    {label}
+                  </option>
+                ))}
               </select>
             </Field>
+
+            <Field
+              label="Label font size"
+              description="Section headers — design default 11px (0.7rem), Outfit, uppercase."
+            >
+              <select
+                value={labelFontSize}
+                onChange={(e) => update("label_font_size", Number(e.target.value))}
+                className={inputClass}
+              >
+                {Object.entries(fontSizeOptions).map(([value, label]) => (
+                  <option key={value} value={Number(value)}>{label}</option>
+                ))}
+              </select>
+            </Field>
+
+            <Field
+              label="Option font size"
+              description="Checkbox / toggle / pill labels — design default 14px (text-sm). Size pills stay 12px."
+            >
+              <select
+                value={optionFontSize}
+                onChange={(e) => update("option_font_size", Number(e.target.value))}
+                className={inputClass}
+              >
+                {Object.entries(fontSizeOptions).map(([value, label]) => (
+                  <option key={value} value={Number(value)}>{label}</option>
+                ))}
+              </select>
+            </Field>
+
+            <Field
+              label="Product title font size"
+              description="Product card titles — design default 14px (text-sm)."
+            >
+              <select
+                value={titleFontSize}
+                onChange={(e) => update("product_title_font_size", Number(e.target.value))}
+                className={inputClass}
+              >
+                {Object.entries(fontSizeOptions).map(([value, label]) => (
+                  <option key={value} value={Number(value)}>{label}</option>
+                ))}
+              </select>
+            </Field>
+
+            <Field
+              label="Product price font size"
+              description="Product card prices — design default 16px (text-base). Original price scales to ~14px."
+            >
+              <select
+                value={priceFontSize}
+                onChange={(e) => update("product_price_font_size", Number(e.target.value))}
+                className={inputClass}
+              >
+                {Object.entries(fontSizeOptions).map(([value, label]) => (
+                  <option key={value} value={Number(value)}>{label}</option>
+                ))}
+              </select>
+            </Field>
+
+            <div
+              className="fo-rounded-xl fo-border fo-border-slate-200 fo-bg-slate-50 fo-p-4"
+              style={{ fontFamily: previewStack }}
+            >
+              <p className="fo-text-xs fo-font-semibold fo-uppercase fo-tracking-wide fo-text-slate-400 fo-mb-2">
+                Preview
+              </p>
+              <p
+                className="fo-font-semibold fo-uppercase fo-tracking-widest fo-text-slate-500"
+                style={{ fontSize: `${labelFontSize}px` }}
+              >
+                Category
+              </p>
+              <div className="fo-mt-3 fo-flex fo-flex-wrap fo-gap-2">
+                <span
+                  className="fo-rounded-full fo-border fo-border-brand-300 fo-bg-brand-50 fo-px-3 fo-py-1 fo-font-medium fo-text-brand-700"
+                  style={{ fontSize: `${optionFontSize}px` }}
+                >
+                  Pill option
+                </span>
+                <span
+                  className="fo-rounded fo-border fo-border-slate-200 fo-bg-white fo-px-2 fo-py-1 fo-text-slate-700"
+                  style={{ fontSize: `${optionFontSize}px` }}
+                >
+                  Size
+                </span>
+              </div>
+              <label
+                className="fo-mt-3 fo-flex fo-items-center fo-gap-2 fo-text-slate-700"
+                style={{ fontSize: `${optionFontSize}px` }}
+              >
+                <input type="checkbox" defaultChecked readOnly />
+                Listed checkbox
+              </label>
+              <div className="fo-mt-4 fo-border-t fo-border-slate-200 fo-pt-3">
+                <p
+                  className="fo-font-semibold fo-text-slate-800"
+                  style={{ fontSize: `${titleFontSize}px` }}
+                >
+                  Product title
+                </p>
+                <p
+                  className="fo-mt-1 fo-font-bold fo-text-slate-800"
+                  style={{ fontSize: `${priceFontSize}px` }}
+                >
+                  $49.00
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="fo-mt-6 fo-rounded-xl fo-bg-brand-50 fo-p-4">

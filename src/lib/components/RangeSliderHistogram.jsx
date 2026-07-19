@@ -10,7 +10,7 @@ export function RangeSliderHistogram({
   histogram,
   step = 1,
   formatValue,
-  barColor = "#8b5cf6",
+  barColor = "#7c3aed",
   onChange,
 }) {
   const [local, setLocal] = useState(value);
@@ -36,14 +36,13 @@ export function RangeSliderHistogram({
   const loPct = pct(local[0]);
   const hiPct = pct(local[1]);
   const rangeStyle = { "--range-accent": barTheme.hex };
+  const isRating = unit === "STARS";
 
   return (
     <div className="ppros_ecom_filter-py-1">
       <div className="ppros_ecom_filter-flex ppros_ecom_filter-justify-between ppros_ecom_filter-items-baseline ppros_ecom_filter-mb-3">
-        <span className="ppros_ecom_filter-text-sm ppros_ecom_filter-font-semibold ppros_ecom_filter-text-slate-800">
-          {label}
-        </span>
-        <span className="ppros_ecom_filter-text-[10px] ppros_ecom_filter-font-bold ppros_ecom_filter-tracking-widest ppros_ecom_filter-text-slate-500">
+        <span className="ppros_ecom_filter-section-title">{label}</span>
+        <span className="ppros_ecom_filter-text-micro ppros_ecom_filter-font-bold ppros_ecom_filter-tracking-widest ppros_ecom_filter-text-slate-400 ppros_ecom_filter-uppercase">
           {unit}
         </span>
       </div>
@@ -60,7 +59,11 @@ export function RangeSliderHistogram({
                 className="ppros_ecom_filter-flex-1 ppros_ecom_filter-rounded-t-md ppros_ecom_filter-min-h-[4px] ppros_ecom_filter-transition-colors"
                 style={{
                   height: `${Math.max(12, h * 100)}%`,
-                  backgroundColor: inRange ? barTheme.active : barTheme.inactive,
+                  backgroundColor: inRange
+                    ? isRating
+                      ? "#FBBF24"
+                      : barTheme.active
+                    : "#F1F0ED",
                 }}
               />
             );
@@ -75,7 +78,7 @@ export function RangeSliderHistogram({
             style={{
               left: `${loPct}%`,
               width: `${hiPct - loPct}%`,
-              backgroundColor: barTheme.active,
+              backgroundColor: isRating ? "#FBBF24" : barTheme.active,
             }}
           />
         </div>
@@ -104,8 +107,7 @@ export function RangeSliderHistogram({
       </div>
 
       <div
-        className="ppros_ecom_filter-flex ppros_ecom_filter-justify-between ppros_ecom_filter-mt-1 ppros_ecom_filter-text-sm ppros_ecom_filter-font-semibold"
-        style={{ color: barTheme.text }}
+        className="ppros_ecom_filter-flex ppros_ecom_filter-justify-between ppros_ecom_filter-mt-1 ppros_ecom_filter-text-sm ppros_ecom_filter-font-semibold ppros_ecom_filter-text-slate-700"
       >
         <span>{fmt(local[0])}</span>
         <span>{fmt(local[1])}</span>

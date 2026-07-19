@@ -81,8 +81,8 @@ class Filter_Orbit_Frontend {
 			return;
 		}
 
-		$this->assets_enqueued  = true;
-		$this->should_enqueue   = true;
+		$this->assets_enqueued = true;
+		$this->should_enqueue  = true;
 
 		$js_version  = filemtime( $js_path );
 		$css_version = file_exists( $css_path ) ? filemtime( $css_path ) : FILTER_ORBIT_VERSION;
@@ -94,6 +94,92 @@ class Filter_Orbit_Frontend {
 				array(),
 				$css_version
 			);
+		}
+
+		$settings      = Filter_Orbit::get_settings();
+		$font_family   = isset( $settings['google_font'] ) ? $settings['google_font'] : Filter_Orbit_Activator::default_body_font();
+		$font_url      = Filter_Orbit_Activator::google_font_css_url( $font_family );
+		$sans_stack    = Filter_Orbit_Activator::google_font_stack( $font_family );
+		$display_stack = Filter_Orbit_Activator::google_font_stack( Filter_Orbit_Activator::default_display_font() );
+		$label_size    = Filter_Orbit_Activator::sanitize_font_size( $settings['label_font_size'] ?? 11, 11 );
+		$option_size   = Filter_Orbit_Activator::sanitize_font_size( $settings['option_font_size'] ?? 14, 14 );
+		$title_size    = Filter_Orbit_Activator::sanitize_font_size( $settings['product_title_font_size'] ?? 14, 14 );
+		$price_size    = Filter_Orbit_Activator::sanitize_font_size( $settings['product_price_font_size'] ?? 16, 16 );
+
+		if ( $font_url ) {
+			wp_enqueue_style(
+				'filter-orbit-fonts',
+				$font_url,
+				array(),
+				null
+			);
+		}
+
+		$font_css = sprintf(
+			'.filter-orbit-root[data-filter-orbit],'
+			. '.filter-orbit-root[data-filter-orbit] .filter-orbit-root,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-root,'
+			. '.filter-orbit-root[data-filter-orbit] .filter-orbit-font-scope{'
+			. '--font-sans:%1$s;'
+			. '--font-display:%2$s;'
+			. '--font-size:16px;'
+			. '--fo-label-size:%3$spx;'
+			. '--fo-option-size:%4$spx;'
+			. '--fo-title-size:%5$spx;'
+			. '--fo-price-size:%6$spx;'
+			. 'font-family:%1$s !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-section-title,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-section-label,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-pill-group-label{'
+			. 'font-family:%2$s !important;'
+			. 'font-size:%3$spx !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-filters-heading,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-filters-heading span{'
+			. 'font-family:%2$s !important;'
+			. 'font-size:2.5rem !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-pill,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-checkbox-row,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-checkbox-row-label,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-checkbox-label,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-toggle-row,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-toggle-row .ppros_ecom_filter-checkbox-label{'
+			. 'font-family:%1$s !important;'
+			. 'font-size:%4$spx !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-pill-size{'
+			. 'font-family:%1$s !important;'
+			. 'font-size:0.75rem !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-product-name,'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-product-title{'
+			. 'font-family:%1$s !important;'
+			. 'font-size:%5$spx !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-product-price{'
+			. 'font-family:%1$s !important;'
+			. 'font-size:%6$spx !important;'
+			. '}'
+			. '.filter-orbit-root[data-filter-orbit] .ppros_ecom_filter-product-price-original{'
+			. 'font-family:%1$s !important;'
+			. 'font-size:calc(%6$spx * 0.875) !important;'
+			. '}',
+			$sans_stack,
+			$display_stack,
+			$label_size,
+			$option_size,
+			$title_size,
+			$price_size
+		);
+
+		wp_register_style( 'filter-orbit-font-vars', false, array(), null );
+		wp_enqueue_style( 'filter-orbit-font-vars' );
+		wp_add_inline_style( 'filter-orbit-font-vars', $font_css );
+
+		if ( file_exists( $css_path ) ) {
+			wp_add_inline_style( 'filter-orbit-frontend', $font_css );
 		}
 
 		wp_enqueue_script(
@@ -158,7 +244,30 @@ class Filter_Orbit_Frontend {
 	 * @return string
 	 */
 	private function get_mount_markup() {
-		return '<div class="filter-orbit-root" data-filter-orbit></div>';
+		$settings      = Filter_Orbit::get_settings();
+		$font_family   = isset( $settings['google_font'] ) ? $settings['google_font'] : Filter_Orbit_Activator::default_body_font();
+		$sans_stack    = Filter_Orbit_Activator::google_font_stack( $font_family );
+		$display_stack = Filter_Orbit_Activator::google_font_stack( Filter_Orbit_Activator::default_display_font() );
+		$label_size    = Filter_Orbit_Activator::sanitize_font_size( $settings['label_font_size'] ?? 11, 11 );
+		$option_size   = Filter_Orbit_Activator::sanitize_font_size( $settings['option_font_size'] ?? 14, 14 );
+		$title_size    = Filter_Orbit_Activator::sanitize_font_size( $settings['product_title_font_size'] ?? 14, 14 );
+		$price_size    = Filter_Orbit_Activator::sanitize_font_size( $settings['product_price_font_size'] ?? 16, 16 );
+
+		$style = sprintf(
+			'--font-sans:%1$s;--font-display:%2$s;--font-size:16px;font-family:%1$s;--fo-label-size:%3$spx;--fo-option-size:%4$spx;--fo-title-size:%5$spx;--fo-price-size:%6$spx;',
+			$sans_stack,
+			$display_stack,
+			$label_size,
+			$option_size,
+			$title_size,
+			$price_size
+		);
+
+		return sprintf(
+			'<div class="filter-orbit-root" data-filter-orbit data-google-font="%s" style="%s"></div>',
+			esc_attr( $font_family ),
+			esc_attr( $style )
+		);
 	}
 
 	/**
@@ -274,19 +383,34 @@ class Filter_Orbit_Frontend {
 			$price = $product->get_regular_price();
 		}
 
+		$regular_price = $product->get_regular_price();
+		$sale_price    = $product->get_sale_price();
+		$on_sale       = $product->is_on_sale();
+		$in_stock      = $product->is_in_stock();
+
 		$data = array(
-			'id'          => (string) $product->get_id(),
-			'title'       => $product->get_name(),
-			'description' => wp_strip_all_tags( $product->get_short_description() ),
-			'price'       => (float) $price,
-			'currency'    => get_woocommerce_currency(),
+			'id'            => (string) $product->get_id(),
+			'title'         => $product->get_name(),
+			'description'   => wp_strip_all_tags( $product->get_short_description() ),
+			'price'         => (float) $price,
+			'regularPrice'  => $regular_price ? (float) $regular_price : null,
+			'onSale'        => $on_sale,
+			'inStock'       => $in_stock,
+			'stockStatus'   => $product->get_stock_status(),
+			'reviewCount'   => (int) $product->get_review_count(),
+			'currency'      => get_woocommerce_currency(),
 			// Store as array so multi-category/tag products match all their values.
-			'category'    => $categories,
-			'brand'       => $tags,
-			'rating'      => (float) $product->get_average_rating(),
-			'imageUrl'    => wp_get_attachment_image_url( $product->get_image_id(), 'medium' ) ?: '',
-			'isVariable'  => $product->is_type( 'variable' ),
+			'category'      => $categories,
+			'brand'         => $tags,
+			'rating'        => (float) $product->get_average_rating(),
+			'imageUrl'      => wp_get_attachment_image_url( $product->get_image_id(), 'medium' ) ?: '',
+			'isVariable'    => $product->is_type( 'variable' ),
+			'isNew'         => (bool) get_post_meta( $product->get_id(), '_is_new', true ),
 		);
+
+		if ( $on_sale && $sale_price ) {
+			$data['price'] = (float) $sale_price;
+		}
 
 		self::map_product_attributes( $data, $product );
 

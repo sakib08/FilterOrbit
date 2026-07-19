@@ -8,6 +8,7 @@ import { PersonalizedFilters } from "./PersonalizedFilters";
 import { RangeSliderHistogram } from "./RangeSliderHistogram";
 import { GlobalSemanticFilter } from "./GlobalSemanticFilter";
 import { PillFilterGroup } from "./PillFilterGroup";
+import { CheckboxFilterGroup } from "./CheckboxFilterGroup";
 import {
   getDefaultUiColorsForBlock,
   getDefaultUiColorsForFilter,
@@ -90,8 +91,9 @@ export function EcomFilterPanel({
             : (n) => `${n}`;
 
       return (
-        <div key={def.id} className="ppros_ecom_filter-panel">
-          <RangeSliderHistogram
+        <div key={def.id} className="ppros_ecom_filter-filter-section">
+          <div className="ppros_ecom_filter-filter-section-body ppros_ecom_filter-pt-4">
+            <RangeSliderHistogram
             key={`${def.id}-${filterResetKey}`}
             label={def.label}
             unit={def.unit}
@@ -104,6 +106,7 @@ export function EcomFilterPanel({
             formatValue={formatValue}
             onChange={(lo, hi) => setRangeFilter(def.id, lo, hi)}
           />
+          </div>
         </div>
       );
     }
@@ -123,16 +126,34 @@ export function EcomFilterPanel({
 
     if (def.options || def.type === "checkbox") {
       const opts = getFilterOptions(def, products);
+      const displayMode = def.displayMode;
+
+      if (displayMode === "checkbox" || displayMode === "toggle") {
+        return (
+          <CheckboxFilterGroup
+            key={def.id}
+            label={def.label}
+            filterId={def.id}
+            options={opts}
+            selected={filterState[def.id] ?? []}
+            onToggle={(v) => toggleFilter(def.id, v)}
+            variant={displayMode}
+          />
+        );
+      }
+
       return (
         <PillFilterGroup
           key={def.id}
           label={def.label}
           filterId={def.id}
+          field={def.field}
           options={opts}
           selected={filterState[def.id] ?? []}
           onToggle={(v) => toggleFilter(def.id, v)}
           buttonColor={ui.buttonColor}
           accentColor={ui.accentColor}
+          variant={displayMode === "size" ? "size" : "pill"}
         />
       );
     }
@@ -169,10 +190,10 @@ export function EcomFilterPanel({
 
   return (
     <aside
-      className={`ppros_ecom_filter-root ppros_ecom_filter-w-full ${columns === 1 ? "ppros_ecom_filter-max-w-md" : ""} ${className}`}
+      className={`ppros_ecom_filter-root ppros_ecom_filter-w-full ${columns === 1 ? "ppros_ecom_filter-max-w-sm" : ""} ${className}`}
       aria-label="Product filters"
     >
-      <div className="ppros_ecom_filter-space-y-5">
+      <div className="ppros_ecom_filter-space-y-3">
         <SearchWithAI
           textQuery={textQuery}
           onTextChange={setTextQuery}
@@ -237,7 +258,7 @@ export function EcomFilterPanel({
           </>
         )}
 
-        <div className="ppros_ecom_filter-flex ppros_ecom_filter-justify-between ppros_ecom_filter-items-center ppros_ecom_filter-px-1 ppros_ecom_filter-py-2">
+        <div className="ppros_ecom_filter-flex ppros_ecom_filter-justify-between ppros_ecom_filter-items-center ppros_ecom_filter-px-1 ppros_ecom_filter-py-3 ppros_ecom_filter-border-t ppros_ecom_filter-border-slate-100">
           <span className="ppros_ecom_filter-text-sm ppros_ecom_filter-font-semibold ppros_ecom_filter-text-slate-800">
             {result.total.toLocaleString()} products
           </span>

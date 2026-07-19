@@ -1,22 +1,20 @@
-import type { Product } from "../types";
-
-function cosineSimilarity(a: number[], b: number[]): number {
+function cosineSimilarity(a, b) {
   if (a.length !== b.length || a.length === 0) return 0;
   let dot = 0;
   let normA = 0;
   let normB = 0;
   for (let i = 0; i < a.length; i++) {
-    dot += a[i]! * b[i]!;
-    normA += a[i]! * a[i]!;
-    normB += b[i]! * b[i]!;
+    dot += a[i] * b[i];
+    normA += a[i] * a[i];
+    normB += b[i] * b[i];
   }
   const denom = Math.sqrt(normA) * Math.sqrt(normB);
   return denom === 0 ? 0 : dot / denom;
 }
 
 /** Simple bag-of-words embedding for demo / offline stores without an API */
-export function textToEmbedding(text: string, dims = 32): number[] {
-  const vec = new Array(dims).fill(0) as number[];
+export function textToEmbedding(text, dims = 32) {
+  const vec = new Array(dims).fill(0);
   const tokens = text.toLowerCase().split(/\W+/).filter(Boolean);
   for (const token of tokens) {
     let hash = 0;
@@ -30,7 +28,7 @@ export function textToEmbedding(text: string, dims = 32): number[] {
   return vec.map((v) => v / norm);
 }
 
-export function ensureProductEmbeddings(products: Product[] | undefined | null): Product[] {
+export function ensureProductEmbeddings(products) {
   if (!Array.isArray(products)) return [];
   return products.map((p) => {
     if (p.embedding?.length) return p;
@@ -42,16 +40,16 @@ export function ensureProductEmbeddings(products: Product[] | undefined | null):
 }
 
 export function findSimilarProducts(
-  products: Product[] | undefined | null,
-  queryEmbedding: number[],
+  products,
+  queryEmbedding,
   threshold = 0.35,
   limit = 50
-): { id: string; score: number }[] {
+) {
   const scored = (products ?? [])
     .filter((p) => p.embedding?.length)
     .map((p) => ({
       id: p.id,
-      score: cosineSimilarity(queryEmbedding, p.embedding!),
+      score: cosineSimilarity(queryEmbedding, p.embedding),
     }))
     .filter((x) => x.score >= threshold)
     .sort((a, b) => b.score - a.score)

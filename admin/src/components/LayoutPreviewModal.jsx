@@ -76,9 +76,100 @@ export default function ColumnWidthControls({ columns, onChange }) {
   );
 }
 
-export function LayoutPreviewModal({ open, onClose, pageLayout, filters, products, language }) {
+function fontStack(family) {
+  if (!family) {
+    return 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+  }
+  return `"${family}", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+}
+
+function ensurePreviewTypography(settings = {}) {
+  const family = settings.google_font || "DM Sans";
+  const families = Array.from(new Set([family, "Outfit"].filter(Boolean)));
+  const id = "filter-orbit-admin-preview-google-font";
+  let link = document.getElementById(id);
+  if (!link) {
+    link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+  }
+  link.href = `https://fonts.googleapis.com/css2?${families.map((f) => `family=${encodeURIComponent(f).replace(/%20/g, "+")}:wght@400;500;600;700`).join("&")}&display=swap`;
+
+  const bodyFamily = family || "DM Sans";
+  const stack = fontStack(bodyFamily);
+  const displayStack = fontStack("Outfit");
+  const labelSize = Number(settings.label_font_size ?? 11);
+  const optionSize = Number(settings.option_font_size ?? 14);
+  const titleSize = Number(settings.product_title_font_size ?? 14);
+  const priceSize = Number(settings.product_price_font_size ?? 16);
+  const styleId = "filter-orbit-admin-preview-typography";
+  let style = document.getElementById(styleId);
+  if (!style) {
+    style = document.createElement("style");
+    style.id = styleId;
+    document.head.appendChild(style);
+  }
+  style.textContent = `
+.filter-orbit-admin-preview,
+.filter-orbit-admin-preview .ppros_ecom_filter-root {
+  --font-sans: ${stack};
+  --font-display: ${displayStack};
+  --font-size: 16px;
+  --fo-label-size: ${labelSize}px;
+  --fo-option-size: ${optionSize}px;
+  --fo-title-size: ${titleSize}px;
+  --fo-price-size: ${priceSize}px;
+  font-family: ${stack} !important;
+}
+.filter-orbit-admin-preview .ppros_ecom_filter-section-title,
+.filter-orbit-admin-preview .ppros_ecom_filter-section-label,
+.filter-orbit-admin-preview .ppros_ecom_filter-pill-group-label {
+  font-family: ${displayStack} !important;
+  font-size: ${labelSize}px !important;
+}
+.filter-orbit-admin-preview .ppros_ecom_filter-filters-heading,
+.filter-orbit-admin-preview .ppros_ecom_filter-filters-heading span {
+  font-family: ${displayStack} !important;
+  font-size: 2.5rem !important;
+}
+.filter-orbit-admin-preview .ppros_ecom_filter-pill,
+.filter-orbit-admin-preview .ppros_ecom_filter-checkbox-row,
+.filter-orbit-admin-preview .ppros_ecom_filter-checkbox-row-label,
+.filter-orbit-admin-preview .ppros_ecom_filter-checkbox-label {
+  font-family: ${stack} !important;
+  font-size: ${optionSize}px !important;
+}
+.filter-orbit-admin-preview .ppros_ecom_filter-pill-size {
+  font-family: ${stack} !important;
+  font-size: 0.75rem !important;
+}
+.filter-orbit-admin-preview .ppros_ecom_filter-product-name,
+.filter-orbit-admin-preview .ppros_ecom_filter-product-title {
+  font-family: ${stack} !important;
+  font-size: ${titleSize}px !important;
+}
+.filter-orbit-admin-preview .ppros_ecom_filter-product-price {
+  font-family: ${stack} !important;
+  font-size: ${priceSize}px !important;
+}
+.filter-orbit-admin-preview .ppros_ecom_filter-product-price-original {
+  font-family: ${stack} !important;
+  font-size: calc(${priceSize}px * 0.875) !important;
+}
+`;
+}
+
+export function LayoutPreviewModal({ open, onClose, pageLayout, filters, products, language, settings }) {
+  const previewSettings = {
+    enable_ai_filter: true,
+    enable_personalization: true,
+    ...(settings && typeof settings === "object" ? settings : {}),
+  };
+
   useEffect(() => {
     if (!open) return undefined;
+    ensurePreviewTypography(previewSettings);
     const onKey = (e) => {
       if (e.key === "Escape") onClose();
     };
@@ -88,7 +179,7 @@ export function LayoutPreviewModal({ open, onClose, pageLayout, filters, product
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [open, onClose]);
+  }, [open, onClose, previewSettings.google_font, previewSettings.label_font_size, previewSettings.option_font_size, previewSettings.product_title_font_size, previewSettings.product_price_font_size]);
 
   if (!open) return null;
 
@@ -121,14 +212,14 @@ export function LayoutPreviewModal({ open, onClose, pageLayout, filters, product
           </button>
         </div>
 
-        <div className="fo-min-h-0 fo-flex-1 fo-overflow-y-auto fo-p-5">
+        <div className="fo-min-h-0 fo-flex-1 fo-overflow-y-auto fo-p-5 filter-orbit-admin-preview">
           {products.length > 0 ? (
             <FilterOrbitLayout
               pageLayout={pageLayout}
               filters={filters}
               products={products}
               language={language}
-              settings={{ enable_ai_filter: true, enable_personalization: true }}
+              settings={previewSettings}
               showVisualUpload={false}
             />
           ) : (

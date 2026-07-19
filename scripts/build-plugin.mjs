@@ -36,6 +36,7 @@ const EXCLUDE = new Set([
   "demo",
   "dist",
   "REVIEW-REPLY.txt",
+  "SVN-DEPLOY.md",
   "README.md",
   "package.json",
   "package-lock.json",

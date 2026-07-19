@@ -98,6 +98,11 @@ class Filter_Orbit_Activator {
 			'show_product_counts'     => true,
 			'cache_products'          => true,
 			'layout_columns'          => 2,
+			'google_font'             => 'DM Sans',
+			'label_font_size'         => 11,
+			'option_font_size'        => 14,
+			'product_title_font_size' => 14,
+			'product_price_font_size' => 16,
 			'page_layout'             => self::default_page_layout(),
 		);
 	}
@@ -232,4 +237,156 @@ class Filter_Orbit_Activator {
 			),
 		);
 	}
+
+	/**
+	 * Allowed Google Font families for the shortcode UI.
+	 *
+	 * @return array<string, string> family => label
+	 */
+	public static function google_fonts() {
+		return array(
+			''                   => __( 'Theme / System default', 'filterorbit-product-filters' ),
+			'DM Sans'            => 'DM Sans',
+			'Outfit'             => 'Outfit',
+			'Inter'              => 'Inter',
+			'Roboto'             => 'Roboto',
+			'Open Sans'          => 'Open Sans',
+			'Lato'               => 'Lato',
+			'Montserrat'         => 'Montserrat',
+			'Poppins'            => 'Poppins',
+			'Nunito'             => 'Nunito',
+			'Nunito Sans'        => 'Nunito Sans',
+			'Source Sans 3'      => 'Source Sans 3',
+			'Raleway'            => 'Raleway',
+			'Ubuntu'             => 'Ubuntu',
+			'Work Sans'          => 'Work Sans',
+			'Manrope'            => 'Manrope',
+			'Plus Jakarta Sans'  => 'Plus Jakarta Sans',
+			'Figtree'            => 'Figtree',
+			'Space Grotesk'      => 'Space Grotesk',
+			'IBM Plex Sans'      => 'IBM Plex Sans',
+			'Mulish'             => 'Mulish',
+			'Karla'              => 'Karla',
+			'Rubik'              => 'Rubik',
+			'Merriweather'       => 'Merriweather',
+			'Playfair Display'   => 'Playfair Display',
+		);
+	}
+
+	/**
+	 * Sanitize a Google Font family name against the allow-list.
+	 *
+	 * @param mixed $value Raw value.
+	 * @return string
+	 */
+	public static function sanitize_google_font( $value ) {
+		$family = is_string( $value ) ? $value : '';
+		$fonts  = self::google_fonts();
+
+		if ( array_key_exists( $family, $fonts ) ) {
+			return $family;
+		}
+
+		return 'DM Sans';
+	}
+
+	/**
+	 * Default display / headings font (Outfit).
+	 *
+	 * @return string
+	 */
+	public static function default_display_font() {
+		return 'Outfit';
+	}
+
+	/**
+	 * Default body / UI font (DM Sans).
+	 *
+	 * @return string
+	 */
+	public static function default_body_font() {
+		return 'DM Sans';
+	}
+
+	/**
+	 * Build Google Fonts CSS2 URL for body + display pair.
+	 *
+	 * @param string $family Body / UI font family (DM Sans by default).
+	 * @return string
+	 */
+	public static function google_font_css_url( $family ) {
+		$body    = self::sanitize_google_font( $family );
+		$display = self::default_display_font();
+		$families = array();
+
+		if ( '' !== $body ) {
+			$families[] = $body;
+		}
+		$families[] = $display;
+		$families   = array_values( array_unique( $families ) );
+
+		if ( empty( $families ) ) {
+			return '';
+		}
+
+		$parts = array();
+		foreach ( $families as $name ) {
+			$parts[] = 'family=' . str_replace( ' ', '+', $name ) . ':wght@400;500;600;700';
+		}
+
+		return 'https://fonts.googleapis.com/css2?' . implode( '&', $parts ) . '&display=swap';
+	}
+
+	/**
+	 * CSS font-family stack for a selected Google Font.
+	 *
+	 * @param string $family Font family.
+	 * @return string
+	 */
+	public static function google_font_stack( $family ) {
+		$family = self::sanitize_google_font( $family );
+
+		if ( '' === $family ) {
+			return 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+		}
+
+		return '"' . $family . '", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+	}
+
+	/**
+	 * Allowed font size options (px) shown in Settings.
+	 *
+	 * @return array<int, string>
+	 */
+	public static function font_size_options() {
+		return array(
+			10 => '10px',
+			11 => '11px',
+			12 => '12px',
+			13 => '13px',
+			14 => '14px',
+			15 => '15px',
+			16 => '16px',
+			18 => '18px',
+			20 => '20px',
+			22 => '22px',
+			24 => '24px',
+		);
+	}
+
+	/**
+	 * Sanitize a typography font size in px.
+	 *
+	 * @param mixed $value   Raw value.
+	 * @param int   $default Fallback.
+	 * @return int
+	 */
+	public static function sanitize_font_size( $value, $default = 14 ) {
+		$size = absint( $value );
+		if ( $size < 10 || $size > 28 ) {
+			return absint( $default );
+		}
+		return $size;
+	}
+
 }

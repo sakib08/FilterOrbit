@@ -207,6 +207,16 @@ class Filter_Orbit_REST_API {
 				$sanitized[ $key ] = min( 3, max( 1, absint( $value ) ) );
 			} elseif ( 'page_layout' === $key && is_array( $value ) ) {
 				$sanitized[ $key ] = $this->sanitize_page_layout( $value );
+			} elseif ( 'google_font' === $key ) {
+				$sanitized[ $key ] = Filter_Orbit_Activator::sanitize_google_font( $value );
+			} elseif ( 'label_font_size' === $key ) {
+				$sanitized[ $key ] = Filter_Orbit_Activator::sanitize_font_size( $value, 11 );
+			} elseif ( 'option_font_size' === $key ) {
+				$sanitized[ $key ] = Filter_Orbit_Activator::sanitize_font_size( $value, 14 );
+			} elseif ( 'product_title_font_size' === $key ) {
+				$sanitized[ $key ] = Filter_Orbit_Activator::sanitize_font_size( $value, 14 );
+			} elseif ( 'product_price_font_size' === $key ) {
+				$sanitized[ $key ] = Filter_Orbit_Activator::sanitize_font_size( $value, 16 );
 			} elseif ( is_int( $default ) ) {
 				$sanitized[ $key ] = absint( $value );
 			} else {
@@ -730,6 +740,14 @@ class Filter_Orbit_REST_API {
 		}
 		if ( isset( $filter['accent'] ) ) {
 			$sanitized['accent'] = in_array( $filter['accent'], array( 'violet', 'teal' ), true ) ? $filter['accent'] : 'violet';
+		}
+		if ( isset( $filter['displayMode'] ) ) {
+			$allowed_modes = array( 'pills', 'checkbox', 'size', 'toggle' );
+			$mode          = sanitize_key( $filter['displayMode'] );
+			$sanitized['displayMode'] = in_array( $mode, $allowed_modes, true ) ? $mode : 'pills';
+		}
+		if ( isset( $filter['variant'] ) ) {
+			$sanitized['variant'] = ! empty( $filter['variant'] );
 		}
 		$default_filter_colors = array(
 			'checkbox' => '#8b5cf6',

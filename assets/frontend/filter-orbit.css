@@ -104,6 +104,12 @@
   --tw-contain-paint:  ;
   --tw-contain-style:  ;
 }
+.filter-orbit-column.ppros_ecom_filter-min-w-0.ppros_ecom_filter-space-y-4 {
+    padding: 15px;
+}
+.filter-orbit-column.ppros_ecom_filter-min-w-0.ppros_ecom_filter-space-y-3 {
+    padding: 15px;
+}
 .ppros_ecom_filter-absolute {
   position: absolute;
 }
@@ -758,7 +764,6 @@
 
 .ppros_ecom_filter-filter-section {
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
 }
 .ppros_ecom_filter-filters-heading svg {
     width: 2.5rem !important;
